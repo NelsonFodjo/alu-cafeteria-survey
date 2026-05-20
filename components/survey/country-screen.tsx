@@ -11,7 +11,7 @@ export function CountryScreen() {
   const [search, setSearch] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const { country, setCountry, setScreen, email, gender, setStudentId } = useSurveyStore()
+  const { country, setCountry, setScreen, email, gender, setStudentId, studentId } = useSurveyStore()
 
   const filtered = AFRICAN_COUNTRIES.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase()),
@@ -23,13 +23,18 @@ export function CountryScreen() {
     setError('')
     try {
       const supabase = createClient()
-      const { data, error: err } = await supabase
-        .from('students')
-        .insert({ email: email.toLowerCase(), gender, country })
-        .select('id')
-        .single()
-      if (err) throw err
-      setStudentId(data.id)
+      if (studentId) {
+        // Retake path: student already exists, just update their info
+        await supabase.from('students').update({ gender, country }).eq('id', studentId)
+      } else {
+        const { data, error: err } = await supabase
+          .from('students')
+          .insert({ email: email.toLowerCase(), gender, country })
+          .select('id')
+          .single()
+        if (err) throw err
+        setStudentId(data.id)
+      }
       setScreen('category-transition')
     } catch {
       setError('Something went wrong. Please try again.')

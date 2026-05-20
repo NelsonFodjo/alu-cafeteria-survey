@@ -125,8 +125,10 @@ export const useSurveyStore = create<SurveyStore>()(
       resetForRetake: () => set({
         ...initialState,
         email: get().email,
+        gender: get().gender,
+        country: get().country,
         studentId: get().studentId,
-        screen: 'gender',
+        screen: 'swipe',
       }),
     }),
     {

@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { DM_Sans } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme-provider'
-import { ThemeToggle } from '@/components/ui/theme-toggle'
 import './globals.css'
 
 const dmSans = DM_Sans({
@@ -38,7 +37,6 @@ export default function RootLayout({
       </head>
       <body className={`${dmSans.className} font-sans antialiased`} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-          <ThemeToggle />
           {children}
         </ThemeProvider>
       </body>

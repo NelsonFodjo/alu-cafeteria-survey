@@ -46,7 +46,7 @@ function Ring({ pct, size = 80, stroke = 9, color = 'var(--primary)' }: { pct: n
 }
 
 export function ResultsScreen({ foodItems }: { foodItems: FoodItem[] }) {
-  const { studentId, resetForRetake } = useSurveyStore()
+  const { studentId, resetForRetake, responses } = useSurveyStore()
   const [isLoading, setIsLoading] = useState(true)
   const [totalStudents, setTotalStudents] = useState(0)
   const [categoryStats, setCategoryStats] = useState<Record<string, FoodStats[]>>({})
@@ -100,17 +100,18 @@ export function ResultsScreen({ foodItems }: { foodItems: FoodItem[] }) {
   }
 
   const handleRetake = async () => {
-    if (!studentId) return
     setIsRetaking(true)
     try {
-      const supabase = createClient()
-      await supabase.from('responses').delete().eq('student_id', studentId)
-      await supabase.from('open_feedback').delete().eq('student_id', studentId)
-      resetForRetake()
-      setShowRetake(false)
+      if (studentId) {
+        const supabase = createClient()
+        await supabase.from('responses').delete().eq('student_id', studentId)
+        await supabase.from('open_feedback').delete().eq('student_id', studentId)
+      }
     } catch (e) {
       console.error(e)
     } finally {
+      resetForRetake()
+      setShowRetake(false)
       setIsRetaking(false)
     }
   }
@@ -208,6 +209,28 @@ export function ResultsScreen({ foodItems }: { foodItems: FoodItem[] }) {
             </div>
           </div>
         </motion.div>
+
+        {/* Your votes */}
+        {responses.length > 0 && (
+          <motion.div className="mb-6 rounded-3xl border border-border bg-card p-5"
+            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }}>
+            <p className="mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Your Votes</p>
+            <div className="grid grid-cols-3 divide-x divide-border text-center">
+              <div className="pr-4">
+                <p className="text-3xl font-black text-emerald-500">{responses.filter(r => r.liked).length}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Liked</p>
+              </div>
+              <div className="px-4">
+                <p className="text-3xl font-black text-red-500">{responses.filter(r => !r.liked).length}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Passed</p>
+              </div>
+              <div className="pl-4">
+                <p className="text-3xl font-black text-foreground">{responses.length}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Total</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Category performance */}
         <motion.div className="mb-6 rounded-3xl border border-border bg-card p-5"
@@ -320,14 +343,20 @@ export function ResultsScreen({ foodItems }: { foodItems: FoodItem[] }) {
 
         {/* Category tabs — all items */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-          <div className="mb-4 flex gap-1 rounded-2xl border border-border bg-card p-1">
+          <div className="mb-4 flex border-b border-border">
             {CATEGORIES.map((cat) => (
               <button key={cat} onClick={() => setActiveTab(cat)}
-                className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-medium transition-all ${
-                  activeTab === cat ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+                className={`relative flex flex-1 cursor-pointer items-center justify-center gap-1.5 pb-3 pt-1 text-xs font-medium transition-colors ${
+                  activeTab === cat ? 'text-foreground' : 'text-muted-foreground hover:text-foreground/70'
                 }`}>
                 <span>{CATEGORY_CONFIG[cat].emoji}</span>
                 <span className="hidden sm:inline">{CATEGORY_CONFIG[cat].label}</span>
+                {activeTab === cat && (
+                  <motion.div
+                    layoutId="tab-underline"
+                    className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full bg-primary"
+                  />
+                )}
               </button>
             ))}
           </div>
@@ -347,21 +376,14 @@ export function ResultsScreen({ foodItems }: { foodItems: FoodItem[] }) {
                     </div>
                     <p className="font-bold text-emerald-500">{Math.round(item.likePercentage)}%</p>
                   </div>
-                  <div className="flex h-5 overflow-hidden">
+                  <div className="flex h-1.5 overflow-hidden rounded-b-2xl">
                     <motion.div
-                      className="flex items-center justify-center bg-emerald-500/70 text-[9px] font-bold text-white"
-                      style={{ width: `${Math.max(item.likePercentage, 10)}%` }}
+                      className="bg-emerald-500/70"
                       initial={{ width: 0 }}
-                      animate={{ width: `${Math.max(item.likePercentage, 10)}%` }}
-                      transition={{ duration: 0.8, delay: i * 0.04 + 0.2 }}>
-                      👍
-                    </motion.div>
-                    <motion.div
-                      className="flex flex-1 items-center justify-center bg-red-500/60 text-[9px] font-bold text-white"
-                      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                      transition={{ delay: i * 0.04 + 0.4 }}>
-                      👎
-                    </motion.div>
+                      animate={{ width: `${Math.max(item.likePercentage, 4)}%` }}
+                      transition={{ duration: 0.8, delay: i * 0.04 + 0.2 }}
+                    />
+                    <div className="flex-1 bg-red-500/40" />
                   </div>
                 </motion.button>
               ))}

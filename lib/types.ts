@@ -17,6 +17,7 @@ export type Category = 'breakfast' | 'lunch' | 'snack' | 'dinner'
 export interface FoodItem {
   id: string
   name: string
+  description?: string
   image_url: string
   category: Category
   order_index: number

@@ -12,12 +12,11 @@ interface FoodImage {
 }
 
 const SLIDES = [
-  { text: "Alchemists complain a lot about the cafeteria food", emoji: "🍽️", duration: 3500 },
-  { text: "No pepper. No soup. Too dry. Too wet. Infinite.", emoji: "🌶️", duration: 3800 },
-  { text: "Some say it makes them sick.", emoji: "🤢", duration: 2800 },
-  { text: "This survey is here to hear from you directly.", emoji: "📝", duration: 3500 },
-  { text: "Swipe left if you hate it. Swipe right if you love it.", emoji: "👆", duration: 3800 },
-  { text: "Ready to rate?", emoji: "🚀", duration: 2200 },
+  { text: "Help us build a better cafeteria menu for every Alchemist", duration: 3800 },
+  { text: "Rate each dish — takes about 3 minutes", duration: 3200 },
+  { text: "Your responses are anonymous and go directly to the team", duration: 3500 },
+  { text: "Swipe right to like. Swipe left to pass.", duration: 3000 },
+  { text: "Ready?", duration: 1800 },
 ]
 
 interface IntroScreenProps {
@@ -75,21 +74,33 @@ export function IntroScreen({ liveCount = 0 }: IntroScreenProps) {
             className="pointer-events-none absolute overflow-hidden rounded-full"
             style={{ ...pos, width: pos.size, height: pos.size }}
             initial={{ opacity: 0, scale: 0.6 }}
-            animate={{
-              opacity: 0.15,
-              scale: 1,
-              y: [0, -12, 0],
-            }}
+            animate={{ opacity: 0.15, scale: 1, y: [0, -12, 0] }}
             transition={{
               opacity: { delay: pos.delay, duration: 0.6 },
               scale: { delay: pos.delay, duration: 0.6 },
               y: { delay: pos.delay, duration: 4, repeat: Infinity, ease: 'easeInOut' },
             }}
           >
-            <img src={food.image_url} alt="" className="h-full w-full object-cover" />
+            <img src={food.image_url} alt="" draggable={false} className="h-full w-full object-cover" />
           </motion.div>
         )
       })}
+
+      {/* ALU logo */}
+      <motion.div
+        className="absolute top-8 left-1/2 -translate-x-1/2 z-20 flex items-baseline gap-2"
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+        <span
+          className="text-2xl font-black tracking-tight text-primary"
+          style={{ fontFamily: 'var(--font-heading)' }}
+        >
+          ALU
+        </span>
+        <span className="text-xs font-medium text-muted-foreground">Cafeteria Survey</span>
+      </motion.div>
 
       {/* Main content */}
       <div className="relative z-10 flex max-w-sm flex-col items-center px-8 text-center">
@@ -102,14 +113,6 @@ export function IntroScreen({ liveCount = 0 }: IntroScreenProps) {
             exit={{ opacity: 0, y: -24, filter: 'blur(8px)', scale: 0.94 }}
             transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
           >
-            <motion.span
-              className="text-6xl"
-              initial={{ scale: 0.5, rotate: -15 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ delay: 0.1, type: 'spring', stiffness: 300, damping: 18 }}
-            >
-              {SLIDES[current].emoji}
-            </motion.span>
             <p
               className="text-[22px] font-semibold leading-[1.35] text-foreground"
               style={{ fontFamily: 'var(--font-heading)' }}
@@ -133,16 +136,17 @@ export function IntroScreen({ liveCount = 0 }: IntroScreenProps) {
       </div>
 
       {/* Live count */}
-      {liveCount > 0 && (
-        <motion.div
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-foreground/[0.06] px-4 py-1.5 text-xs text-muted-foreground"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-        >
-          🟢 {liveCount} student{liveCount !== 1 ? 's' : ''} responded
-        </motion.div>
-      )}
+      <motion.div
+        className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-full bg-foreground/[0.06] px-4 py-1.5"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.8 }}
+      >
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+        <span className="text-xs text-muted-foreground">
+          {liveCount > 0 ? `${liveCount} student${liveCount !== 1 ? 's' : ''} responded` : 'Be the first to respond'}
+        </span>
+      </motion.div>
 
       {/* Skip */}
       <motion.button
