@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useDrag } from '@use-gesture/react'
 import { useSurveyStore } from '@/lib/store'
 import { CATEGORIES, CATEGORY_CONFIG, type Category, type FoodItem } from '@/lib/types'
+import { X, Heart } from 'lucide-react'
 import confetti from 'canvas-confetti'
 
 export function SwipeScreen({ foodItems }: { foodItems: FoodItem[] }) {
@@ -18,6 +19,9 @@ export function SwipeScreen({ foodItems }: { foodItems: FoodItem[] }) {
   const [nextCatAnnouncement, setNextCatAnnouncement] = useState<Category | null>(null)
 
   const cardRef = useRef<HTMLDivElement>(null)
+  const likeOverlayRef = useRef<HTMLDivElement>(null)
+  const nopeOverlayRef = useRef<HTMLDivElement>(null)
+  const nextCardTintRef = useRef<HTMLDivElement>(null)
 
   const categoryItems = foodItems.filter((item) => item.category === currentCategory)
   const currentItem = categoryItems[currentCardIndex]
@@ -28,12 +32,15 @@ export function SwipeScreen({ foodItems }: { foodItems: FoodItem[] }) {
   const totalItems = foodItems.length
   const answeredItems = responses.length
 
-  // Reset card position when card changes
+  // Reset card and overlays when card changes
   useEffect(() => {
     const card = cardRef.current
     if (!card) return
     card.style.transition = 'none'
     card.style.transform = 'translateX(0) rotate(0deg)'
+    if (likeOverlayRef.current) likeOverlayRef.current.style.opacity = '0'
+    if (nopeOverlayRef.current) nopeOverlayRef.current.style.opacity = '0'
+    if (nextCardTintRef.current) nextCardTintRef.current.style.backgroundColor = 'transparent'
   }, [currentCardIndex, currentCategory])
 
   const advanceCard = useCallback(() => {
@@ -82,12 +89,27 @@ export function SwipeScreen({ foodItems }: { foodItems: FoodItem[] }) {
       if (dragging) {
         el.style.transition = 'none'
         el.style.transform = `translateX(${mx}px) rotate(${(mx / 300) * 22}deg)`
+
+        const likeOpacity = Math.min(1, Math.max(0, (mx - 30) / 130))
+        const nopeOpacity = Math.min(1, Math.max(0, (-mx - 30) / 130))
+        if (likeOverlayRef.current) likeOverlayRef.current.style.opacity = String(likeOpacity)
+        if (nopeOverlayRef.current) nopeOverlayRef.current.style.opacity = String(nopeOpacity)
+
+        // Tint the peek card green when swiping right, red when left
+        if (nextCardTintRef.current) {
+          if (mx > 30) nextCardTintRef.current.style.backgroundColor = `rgba(34,197,94,${likeOpacity * 0.35})`
+          else if (mx < -30) nextCardTintRef.current.style.backgroundColor = `rgba(239,68,68,${nopeOpacity * 0.35})`
+          else nextCardTintRef.current.style.backgroundColor = 'transparent'
+        }
       } else {
         if (dx > 100) {
           swipeCard(xDir > 0 ? 'right' : 'left')
         } else {
           el.style.transition = 'transform 0.3s ease'
           el.style.transform = 'translateX(0) rotate(0deg)'
+          if (likeOverlayRef.current) likeOverlayRef.current.style.opacity = '0'
+          if (nopeOverlayRef.current) nopeOverlayRef.current.style.opacity = '0'
+          if (nextCardTintRef.current) nextCardTintRef.current.style.backgroundColor = 'transparent'
         }
       }
     },
@@ -142,14 +164,15 @@ export function SwipeScreen({ foodItems }: { foodItems: FoodItem[] }) {
 
       {/* Card area */}
       <div className="relative z-10 w-full max-w-sm px-5">
-        {/* Next card (behind) */}
+        {/* Next card (behind) — tinted by nextCardTintRef */}
         {nextItem && (
           <div
-            className="absolute inset-x-5 -bottom-4 overflow-hidden rounded-[28px] opacity-50"
+            className="absolute inset-x-5 -bottom-4 overflow-hidden rounded-[28px] opacity-60"
             style={{ height: '68vh', transform: 'scale(0.93)' }}
           >
             <img src={nextItem.image_url} alt="" draggable={false} className="h-full w-full object-cover" />
             <div className="absolute inset-0 bg-background/40" />
+            <div ref={nextCardTintRef} className="absolute inset-0 transition-colors duration-75" />
           </div>
         )}
 
@@ -210,6 +233,22 @@ export function SwipeScreen({ foodItems }: { foodItems: FoodItem[] }) {
               )}
               <p className="mt-2 text-xs text-white/30">swipe or use ← → keys</p>
             </div>
+
+            {/* LIKE overlay */}
+            <div ref={likeOverlayRef} className="pointer-events-none absolute inset-0 z-20" style={{ opacity: 0 }}>
+              <div className="absolute inset-0 bg-gradient-to-l from-emerald-500/40 to-transparent" />
+              <div className="absolute left-5 top-14 -rotate-[22deg] rounded-xl border-[3px] border-emerald-400 px-3 py-1">
+                <span className="text-2xl font-black tracking-wider text-emerald-400">LIKE</span>
+              </div>
+            </div>
+
+            {/* NOPE overlay */}
+            <div ref={nopeOverlayRef} className="pointer-events-none absolute inset-0 z-20" style={{ opacity: 0 }}>
+              <div className="absolute inset-0 bg-gradient-to-r from-red-500/40 to-transparent" />
+              <div className="absolute right-5 top-14 rotate-[22deg] rounded-xl border-[3px] border-red-400 px-3 py-1">
+                <span className="text-2xl font-black tracking-wider text-red-400">NOPE</span>
+              </div>
+            </div>
           </div>
         </motion.div>
 
@@ -234,24 +273,26 @@ export function SwipeScreen({ foodItems }: { foodItems: FoodItem[] }) {
         </AnimatePresence>
       </div>
 
-      {/* Minimal action row */}
-      <div className="relative z-10 mt-6 flex items-center gap-4">
+      {/* Action buttons */}
+      <div className="relative z-10 mt-7 flex items-center gap-8">
         <motion.button
           onClick={() => swipeCard('left')}
-          className="cursor-pointer rounded-xl border border-border bg-card/80 px-5 py-2.5 text-sm font-medium text-muted-foreground backdrop-blur-sm transition-all hover:border-destructive/40 hover:text-destructive disabled:opacity-30"
-          whileTap={{ scale: 0.95 }}
+          className="flex h-[64px] w-[64px] cursor-pointer items-center justify-center rounded-full border-2 border-red-500/40 bg-red-500/15 text-red-500 shadow-xl shadow-red-500/10 backdrop-blur-sm transition-all hover:bg-red-500/25 disabled:opacity-40"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.85 }}
           disabled={isAnimating}
         >
-          Pass
+          <X className="h-7 w-7" strokeWidth={2.5} />
         </motion.button>
 
         <motion.button
           onClick={() => swipeCard('right')}
-          className="cursor-pointer rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:opacity-90 disabled:opacity-30"
-          whileTap={{ scale: 0.95 }}
+          className="flex h-[64px] w-[64px] cursor-pointer items-center justify-center rounded-full border-2 border-emerald-500/40 bg-emerald-500/15 text-emerald-500 shadow-xl shadow-emerald-500/10 backdrop-blur-sm transition-all hover:bg-emerald-500/25 disabled:opacity-40"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.85 }}
           disabled={isAnimating}
         >
-          Like
+          <Heart className="h-7 w-7" fill="currentColor" />
         </motion.button>
       </div>
     </div>
