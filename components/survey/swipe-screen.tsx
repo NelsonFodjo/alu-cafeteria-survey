@@ -186,7 +186,7 @@ export function SwipeScreen({ foodItems }: { foodItems: FoodItem[] }) {
           <div
             ref={cardRef}
             className="relative h-full cursor-grab overflow-hidden rounded-[28px] shadow-2xl active:cursor-grabbing touch-none select-none"
-            {...(bind() as unknown as Record<string, unknown>)}
+            {...bind()}
           >
             {/* Transparent overlay prevents browser native image drag */}
             <div className="absolute inset-0 z-10" />
