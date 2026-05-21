@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useDrag } from '@use-gesture/react'
 import { useSurveyStore } from '@/lib/store'
-import { CATEGORIES, CATEGORY_CONFIG, type Category, type FoodItem } from '@/lib/types'
+import { CATEGORIES, CATEGORY_CONFIG, type Category, type FoodItem } from '@/lib/utils'
 import { X, Heart } from 'lucide-react'
 import confetti from 'canvas-confetti'
 

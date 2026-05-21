@@ -2,7 +2,7 @@
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Screen, Gender, Response, Category } from './types'
+import type { Screen, Gender, Response, Category } from './utils'
 
 interface SurveyStore {
   // Navigation

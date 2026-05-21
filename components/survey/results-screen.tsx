@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSurveyStore } from '@/lib/store'
-import { createClient } from '@/lib/supabase/client'
-import { CATEGORIES, CATEGORY_CONFIG, type Category, type FoodItem } from '@/lib/types'
+import { createClient } from '@/lib/utils'
+import { CATEGORIES, CATEGORY_CONFIG, type Category, type FoodItem } from '@/lib/utils'
 import { Trophy, HeartCrack, Flame, Loader2, RotateCcw, X } from 'lucide-react'
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,

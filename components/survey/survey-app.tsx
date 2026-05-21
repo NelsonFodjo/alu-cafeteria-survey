@@ -3,18 +3,11 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useSurveyStore } from '@/lib/store'
-import { createClient } from '@/lib/supabase/client'
-import { IntroScreen } from './intro-screen'
-import { EmailScreen } from './email-screen'
-import { GenderScreen } from './gender-screen'
-import { CountryScreen } from './country-screen'
-import { CategoryTransition } from './category-transition'
+import { createClient, type FoodItem } from '@/lib/utils'
+import { IntroScreen, EmailScreen, GenderScreen, CountryScreen } from './onboarding'
+import { CategoryTransition, DislikeDetailScreen, FeedbackDetailScreen, OpenFeedbackScreen } from './post-swipe'
 import { SwipeScreen } from './swipe-screen'
-import { DislikeDetailScreen } from './dislike-detail-screen'
-import { FeedbackDetailScreen } from './feedback-detail-screen'
-import { OpenFeedbackScreen } from './open-feedback-screen'
 import { ResultsScreen } from './results-screen'
-import type { FoodItem } from '@/lib/types'
 import { Loader2 } from 'lucide-react'
 
 export function SurveyApp() {
@@ -23,47 +16,29 @@ export function SurveyApp() {
   const [isLoading, setIsLoading] = useState(true)
   const [liveCount, setLiveCount] = useState(0)
 
-  useEffect(() => {
-    const fetchFoodItems = async () => {
-      try {
-        const supabase = createClient()
-        const { data, error } = await supabase
-          .from('food_items')
-          .select('*')
-          .eq('is_active', true)
-          .order('order_index')
-
-        if (error) throw error
-        setFoodItems(data || [])
-      } catch (err) {
-        console.error('Error fetching food items:', err)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchFoodItems()
-  }, [])
-
-  // Live respondent counter via Supabase realtime
+  // Fetch all active food items once on mount
   useEffect(() => {
     const supabase = createClient()
-
     supabase
-      .from('students')
-      .select('*', { count: 'exact', head: true })
-      .then(({ count }) => setLiveCount(count || 0))
+      .from('food_items')
+      .select('*')
+      .eq('is_active', true)
+      .order('order_index')
+      .then(({ data, error }) => {
+        if (!error) setFoodItems(data || [])
+        setIsLoading(false)
+      })
+  }, [])
 
+  // Subscribe to realtime student inserts for the live counter
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.from('students').select('*', { count: 'exact', head: true }).then(({ count }) => setLiveCount(count || 0))
     const channel = supabase
       .channel('live-students')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'students' }, () => {
-        setLiveCount((prev) => prev + 1)
-      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'students' }, () => setLiveCount((p) => p + 1))
       .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
+    return () => { supabase.removeChannel(channel) }
   }, [])
 
   if (isLoading) {
@@ -76,18 +51,16 @@ export function SurveyApp() {
 
   return (
     <AnimatePresence mode="wait">
-      {screen === 'intro' && <IntroScreen key="intro" liveCount={liveCount} />}
-      {screen === 'email' && <EmailScreen key="email" />}
-      {screen === 'gender' && <GenderScreen key="gender" />}
-      {screen === 'country' && <CountryScreen key="country" />}
-      {screen === 'category-transition' && (
-        <CategoryTransition key={`transition-${currentCategory}`} category={currentCategory} />
-      )}
-      {screen === 'swipe' && <SwipeScreen key="swipe" foodItems={foodItems} />}
-      {screen === 'dislike-detail' && <DislikeDetailScreen key="dislike-detail" foodItems={foodItems} />}
-      {screen === 'feedback-detail' && <FeedbackDetailScreen key="feedback-detail" foodItems={foodItems} />}
-      {screen === 'open-feedback' && <OpenFeedbackScreen key="open-feedback" />}
-      {screen === 'results' && <ResultsScreen key="results" foodItems={foodItems} />}
+      {screen === 'intro'               && <IntroScreen key="intro" liveCount={liveCount} />}
+      {screen === 'email'               && <EmailScreen key="email" />}
+      {screen === 'gender'              && <GenderScreen key="gender" />}
+      {screen === 'country'             && <CountryScreen key="country" />}
+      {screen === 'category-transition' && <CategoryTransition key={`transition-${currentCategory}`} category={currentCategory} />}
+      {screen === 'swipe'               && <SwipeScreen key="swipe" foodItems={foodItems} />}
+      {screen === 'dislike-detail'      && <DislikeDetailScreen key="dislike-detail" foodItems={foodItems} />}
+      {screen === 'feedback-detail'     && <FeedbackDetailScreen key="feedback-detail" foodItems={foodItems} />}
+      {screen === 'open-feedback'       && <OpenFeedbackScreen key="open-feedback" />}
+      {screen === 'results'             && <ResultsScreen key="results" foodItems={foodItems} />}
     </AnimatePresence>
   )
 }
