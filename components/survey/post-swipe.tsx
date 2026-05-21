@@ -87,9 +87,9 @@ function SwipeDemo({ foodItems, onDone }: { foodItems: FoodItem[]; onDone: () =>
 
   useEffect(() => {
     const t1 = setTimeout(() => setPhase('right'), 900)
-    const t2 = setTimeout(() => { setDismissed(true); setPhase('idle') }, 1600)
-    const t3 = setTimeout(() => setPhase('left'), 2400)
-    const t4 = setTimeout(advance, 3400)
+    const t2 = setTimeout(() => { setDismissed(true); setPhase('idle') }, 2200)
+    const t3 = setTimeout(() => setPhase('left'), 3400)
+    const t4 = setTimeout(advance, 4800)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
