@@ -21,12 +21,10 @@ const radialBg = 'radial-gradient(ellipse 80% 60% at 50% 0%, color-mix(in srgb, 
 // IntroScreen
 // ═══════════════════════════════════════════════════════════════════════════════
 const SLIDES = [
-  { text: "Alchemists complain a lot about the food at the Cafeteria.", duration: 4000 },
-  { text: "No Pepper. No Salt. Too Dry. Too Wet. ... The list is infinite.", duration: 4500 },
-  { text: "Some say it makes them sick. Some say they like egg but not the one served at the cafeteria", duration: 4500 },
+  { text: "Alchemists complain a lot about the food served at the Cafeteria. No Pepper. No Salt. Too Dry. Too Wet... The list is infinite.", duration: 5000 },
+  { text: "Some say it makes them sick. Some say they like food but not the one served at the cafeteria", duration: 4500 },
   { text: "So we decided to actually ask you 🫵", duration: 3000 },
-  { text: "10+ Alchemists took this survey. The slowest took 5 minutes. The fastest? 45 seconds.", duration: 5000 },
-  { text: "Swipe Right if you like it 💚. Swipe Left if you don't ❌", duration: 4000 }
+  { text: "10+ Alchemists took this survey. The slowest took 5 minutes. The fastest? 1 minute.", duration: 4500 }
 ]
 
 
