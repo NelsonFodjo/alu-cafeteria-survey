@@ -12,10 +12,20 @@ import { Loader2 } from 'lucide-react'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 export function SurveyApp() {
-  const { screen, currentCategory } = useSurveyStore()
+  const { screen, currentCategory, studentId, email, resetSurvey } = useSurveyStore()
   const [foodItems, setFoodItems] = useState<FoodItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [liveCount, setLiveCount] = useState(0)
+
+  // On mount: verify persisted session still exists in DB, reset if not
+  useEffect(() => {
+    if (!studentId && !email) return
+    const supabase = createClient()
+    const check = studentId
+      ? supabase.from('students').select('id').eq('id', studentId).maybeSingle()
+      : supabase.from('students').select('id').eq('email', email).maybeSingle()
+    check.then(({ data }) => { if (!data) resetSurvey() })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Fetch all active food items once on mount
   useEffect(() => {
