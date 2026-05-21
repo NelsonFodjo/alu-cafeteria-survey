@@ -84,11 +84,12 @@ export function ResultsScreen({ foodItems }: { foodItems: FoodItem[] }) {
             const stat: FoodStats = {
               id: item.id, name: item.name, image_url: item.image_url, category: cat,
               likes: s.likes, dislikes: s.dislikes, total,
-              likePercentage: total > 0 ? (s.likes / total) * 100 : 50,
+              likePercentage: total > 0 ? (s.likes / total) * 100 : 0,
             }
             all.push(stat)
             return stat
           })
+          .sort((a, b) => b.likePercentage - a.likePercentage)
       })
       setCategoryStats(catStats)
       setAllStats(all)
