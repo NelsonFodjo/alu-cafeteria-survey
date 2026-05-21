@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSurveyStore } from '@/lib/store'
 import { createClient, CATEGORIES, CATEGORY_CONFIG, type Category, type FoodItem } from '@/lib/utils'
-import { Check, ArrowRight, Loader2, Heart, X } from 'lucide-react'
+import { Check, ArrowRight, Loader2 } from 'lucide-react'
 import confetti from 'canvas-confetti'
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -70,13 +70,20 @@ export function CategoryTransition({ category, foodItems }: { category: Category
 }
 
 // ── SwipeDemo — animated tutorial with two real food images ──────────────────
+// Timeline:
+//   0.5s  — card1 appears, instruction "Swipe left if you don't like it 👎" shown
+//   2.8s  — card1 swipes left (NOPE)
+//   3.8s  — card2 appears, instruction "Swipe right if you like it 👍" shown
+//   6.2s  — card2 swipes right (LIKE)
+//   7.2s  — advance to swipe screen
 function SwipeDemo({ foodItems, onDone }: { foodItems: FoodItem[]; onDone: () => void }) {
   const [card1, card2] = foodItems.length >= 2
     ? [foodItems[0], foodItems[1]]
     : [null, null]
 
-  const [phase, setPhase] = useState<'idle' | 'right' | 'left' | 'done'>('idle')
-  const [dismissed, setDismissed] = useState(false)
+  // phase drives what's animated
+  type Phase = 'show1' | 'swipe1-left' | 'show2' | 'swipe2-right'
+  const [phase, setPhase] = useState<Phase>('show1')
   const doneRef = useRef(false)
 
   const advance = () => {
@@ -86,17 +93,24 @@ function SwipeDemo({ foodItems, onDone }: { foodItems: FoodItem[]; onDone: () =>
   }
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase('right'), 900)
-    const t2 = setTimeout(() => { setDismissed(true); setPhase('idle') }, 2200)
-    const t3 = setTimeout(() => setPhase('left'), 3400)
-    const t4 = setTimeout(advance, 4800)
+    const t1 = setTimeout(() => setPhase('swipe1-left'), 2800)
+    const t2 = setTimeout(() => setPhase('show2'),       3800)
+    const t3 = setTimeout(() => setPhase('swipe2-right'), 6200)
+    const t4 = setTimeout(advance,                        7200)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const card1X = phase === 'right' ? '130vw' : '0px'
-  const card1Rotate = phase === 'right' ? 22 : 0
-  const likeOpacity = phase === 'right' ? 1 : 0
-  const nopeOpacity = phase === 'left' ? 1 : 0
+  const showCard1 = phase === 'show1' || phase === 'swipe1-left'
+  const showCard2 = phase === 'show2' || phase === 'swipe2-right'
+
+  const card1X      = phase === 'swipe1-left'  ? '-130vw' : '0px'
+  const card1Rotate = phase === 'swipe1-left'  ? -22 : 0
+  const card2X      = phase === 'swipe2-right' ? '130vw'  : '0px'
+  const card2Rotate = phase === 'swipe2-right' ? 22 : 0
+
+  const instruction = phase === 'show1' || phase === 'swipe1-left'
+    ? { text: "Swipe left if you don't like it", emoji: '👎', color: 'text-red-400', arrow: '←', dir: 'left' }
+    : { text: 'Swipe right if you like it', emoji: '👍', color: 'text-emerald-400', arrow: '→', dir: 'right' }
 
   return (
     <motion.div
@@ -107,6 +121,7 @@ function SwipeDemo({ foodItems, onDone }: { foodItems: FoodItem[]; onDone: () =>
     >
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 40%, color-mix(in srgb, var(--primary) 10%, transparent), transparent)' }} />
 
+      {/* Top label */}
       <motion.div
         className="absolute top-12 left-0 right-0 flex flex-col items-center gap-1 px-8 text-center"
         initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
@@ -117,104 +132,82 @@ function SwipeDemo({ foodItems, onDone }: { foodItems: FoodItem[]; onDone: () =>
         </h1>
       </motion.div>
 
+      {/* Card */}
       {card1 && card2 && (
-        <div className="relative w-full max-w-[280px]" style={{ height: '52vh' }}>
-          {dismissed && (
-            <motion.div
-              className="absolute inset-0 overflow-hidden rounded-[24px] shadow-xl"
-              initial={{ scale: 0.93, opacity: 0.6 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-            >
-              <img src={card2.image_url} alt={card2.name} draggable={false} className="h-full w-full object-cover" />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-black via-black/70 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-4">
-                <p className="text-xl font-bold text-white" style={{ fontFamily: 'var(--font-heading)' }}>{card2.name}</p>
-              </div>
-              <motion.div className="pointer-events-none absolute inset-0" style={{ opacity: nopeOpacity }} transition={{ duration: 0.2 }}>
-                <div className="absolute inset-0 bg-gradient-to-r from-red-500/40 to-transparent" />
-                <div className="absolute right-4 top-10 rotate-[22deg] rounded-xl border-[3px] border-red-400 px-3 py-1">
-                  <span className="text-xl font-black tracking-wider text-red-400">NOPE</span>
+        <div className="relative w-full max-w-[260px]" style={{ height: '48vh' }}>
+          <AnimatePresence mode="wait">
+            {showCard1 && (
+              <motion.div
+                key="card1"
+                className="absolute inset-0 overflow-hidden rounded-[24px] shadow-2xl"
+                animate={{ x: card1X, rotate: card1Rotate }}
+                transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+                exit={{ opacity: 0 }}
+              >
+                <img src={card1.image_url} alt={card1.name} draggable={false} className="h-full w-full object-cover" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-black via-black/70 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-4">
+                  <p className="text-xl font-bold text-white" style={{ fontFamily: 'var(--font-heading)' }}>{card1.name}</p>
                 </div>
+                {/* NOPE overlay on swipe */}
+                <motion.div className="pointer-events-none absolute inset-0" animate={{ opacity: phase === 'swipe1-left' ? 1 : 0 }} transition={{ duration: 0.2 }}>
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-500/50 to-transparent" />
+                  <div className="absolute right-4 top-10 rotate-[22deg] rounded-xl border-[3px] border-red-400 px-3 py-1">
+                    <span className="text-xl font-black tracking-wider text-red-400">NOPE</span>
+                  </div>
+                </motion.div>
               </motion.div>
-              <AnimatePresence>
-                {phase === 'left' && (
-                  <motion.div
-                    className="absolute inset-0 flex items-center justify-start pl-4"
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                  >
-                    <motion.div
-                      animate={{ x: [-4, -14, -4] }}
-                      transition={{ duration: 0.6, repeat: Infinity }}
-                      className="flex items-center gap-1 rounded-full bg-red-500/20 px-3 py-1.5 text-sm font-semibold text-red-400"
-                    >
-                      ← pass
-                    </motion.div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          )}
-
-          {!dismissed && (
-            <motion.div
-              className="absolute inset-0 overflow-hidden rounded-[24px] shadow-2xl"
-              animate={{ x: card1X, rotate: card1Rotate }}
-              transition={{ duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
-            >
-              <img src={card1.image_url} alt={card1.name} draggable={false} className="h-full w-full object-cover" />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-black via-black/70 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-4">
-                <p className="text-xl font-bold text-white" style={{ fontFamily: 'var(--font-heading)' }}>{card1.name}</p>
-              </div>
-              <motion.div className="pointer-events-none absolute inset-0" animate={{ opacity: likeOpacity }} transition={{ duration: 0.2 }}>
-                <div className="absolute inset-0 bg-gradient-to-l from-emerald-500/40 to-transparent" />
-                <div className="absolute left-4 top-10 -rotate-[22deg] rounded-xl border-[3px] border-emerald-400 px-3 py-1">
-                  <span className="text-xl font-black tracking-wider text-emerald-400">LIKE</span>
+            )}
+            {showCard2 && (
+              <motion.div
+                key="card2"
+                className="absolute inset-0 overflow-hidden rounded-[24px] shadow-2xl"
+                initial={{ scale: 0.92, opacity: 0 }}
+                animate={{ x: card2X, rotate: card2Rotate, scale: 1, opacity: 1 }}
+                transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+              >
+                <img src={card2.image_url} alt={card2.name} draggable={false} className="h-full w-full object-cover" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-black via-black/70 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-4">
+                  <p className="text-xl font-bold text-white" style={{ fontFamily: 'var(--font-heading)' }}>{card2.name}</p>
                 </div>
+                {/* LIKE overlay on swipe */}
+                <motion.div className="pointer-events-none absolute inset-0" animate={{ opacity: phase === 'swipe2-right' ? 1 : 0 }} transition={{ duration: 0.2 }}>
+                  <div className="absolute inset-0 bg-gradient-to-l from-emerald-500/50 to-transparent" />
+                  <div className="absolute left-4 top-10 -rotate-[22deg] rounded-xl border-[3px] border-emerald-400 px-3 py-1">
+                    <span className="text-xl font-black tracking-wider text-emerald-400">LIKE</span>
+                  </div>
+                </motion.div>
               </motion.div>
-              <AnimatePresence>
-                {phase === 'right' && (
-                  <motion.div
-                    className="absolute inset-0 flex items-center justify-end pr-4"
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                  >
-                    <motion.div
-                      animate={{ x: [4, 14, 4] }}
-                      transition={{ duration: 0.6, repeat: Infinity }}
-                      className="flex items-center gap-1 rounded-full bg-emerald-500/20 px-3 py-1.5 text-sm font-semibold text-emerald-400"
-                    >
-                      like →
-                    </motion.div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          )}
+            )}
+          </AnimatePresence>
         </div>
       )}
 
-      <motion.div
-        className="mt-6 flex items-center gap-6"
-        initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
-      >
-        <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-red-500/40 bg-red-500/15 text-red-500">
-            <X className="h-4 w-4" strokeWidth={2.5} />
+      {/* Instruction label below card */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={instruction.text}
+          className="mt-6 flex flex-col items-center gap-2"
+          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.35 }}
+        >
+          <span className="text-4xl">{instruction.emoji}</span>
+          <div className={`flex items-center gap-2 text-[17px] font-semibold ${instruction.color}`}>
+            {instruction.dir === 'left' && (
+              <motion.span animate={{ x: [-2, -10, -2] }} transition={{ duration: 0.7, repeat: Infinity }}>←</motion.span>
+            )}
+            <span>{instruction.text}</span>
+            {instruction.dir === 'right' && (
+              <motion.span animate={{ x: [2, 10, 2] }} transition={{ duration: 0.7, repeat: Infinity }}>→</motion.span>
+            )}
           </div>
-          <span className="text-sm text-muted-foreground">Swipe left to pass</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-emerald-500/40 bg-emerald-500/15 text-emerald-500">
-            <Heart className="h-4 w-4" fill="currentColor" />
-          </div>
-          <span className="text-sm text-muted-foreground">Swipe right to like</span>
-        </div>
-      </motion.div>
+        </motion.div>
+      </AnimatePresence>
 
       <motion.p
         className="absolute bottom-8 text-xs text-muted-foreground/60"
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
       >
         Tap anywhere to skip
       </motion.p>

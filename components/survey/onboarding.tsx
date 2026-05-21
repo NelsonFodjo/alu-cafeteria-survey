@@ -21,27 +21,19 @@ const radialBg = 'radial-gradient(ellipse 80% 60% at 50% 0%, color-mix(in srgb, 
 // IntroScreen
 // ═══════════════════════════════════════════════════════════════════════════════
 const SLIDES = [
-  { text: 'Help us build a better cafeteria menu for every Alchemist', duration: 3800 },
-  { text: 'Rate each dish — takes about 3 minutes', duration: 3200 },
-  { text: 'Your responses are anonymous and go directly to the team', duration: 3500 },
-  { text: 'Swipe right to like. Swipe left to pass.', duration: 3000 },
-  { text: 'Ready?', duration: 1800 },
+  { text: "Alchemists complain a lot about the food at the Cafeteria.", duration: 4000 },
+  { text: "No Pepper. No Soup. Too Dry. Too Wet. ... The list is infinite.", duration: 4500 },
+  { text: "Some say it makes them sick.", duration: 3500 },
+  { text: "So we decided to actually ask you 🫵", duration: 4000 },
+  { text: "10+ Alchemists took this. The slowest took 5 minutes. The fastest? 45 seconds.", duration: 5000 },
+  { text: "Swipe Right if you like it. Swipe Left if you don't.", duration: 4000 },
+  { text: "Are you ready?", duration: 2500 },
 ]
 
-interface FoodImage { id: string; image_url: string; name: string }
 
 export function IntroScreen({ liveCount = 0 }: { liveCount?: number }) {
   const [current, setCurrent] = useState(0)
-  const [foodImages, setFoodImages] = useState<FoodImage[]>([])
   const setScreen = useSurveyStore((s) => s.setScreen)
-
-  useEffect(() => {
-    createClient()
-      .from('food_items')
-      .select('id, image_url, name')
-      .limit(6)
-      .then(({ data }) => { if (data) setFoodImages(data) })
-  }, [])
 
   const advance = useCallback(() => {
     if (current < SLIDES.length - 1) setCurrent((p) => p + 1)
@@ -53,16 +45,6 @@ export function IntroScreen({ liveCount = 0 }: { liveCount?: number }) {
     return () => clearTimeout(t)
   }, [current, advance])
 
-  // Positions for the floating food bubble images
-  const positions = [
-    { top: '8%',  left: '4%',  size: 72, delay: 0   },
-    { top: '12%', right: '6%', size: 56, delay: 0.4  },
-    { bottom: '18%', left: '6%',  size: 64, delay: 0.8 },
-    { bottom: '22%', right: '4%', size: 72, delay: 1.2 },
-    { top: '42%', left: '2%',  size: 48, delay: 1.6  },
-    { top: '38%', right: '2%', size: 52, delay: 2.0  },
-  ]
-
   return (
     <motion.div
       className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden bg-background"
@@ -73,27 +55,6 @@ export function IntroScreen({ liveCount = 0 }: { liveCount?: number }) {
       transition={{ duration: 0.5 }}
       onClick={advance}
     >
-      {/* Floating food images in the background */}
-      {foodImages.map((food, i) => {
-        const pos = positions[i % positions.length]
-        return (
-          <motion.div
-            key={food.id}
-            className="pointer-events-none absolute overflow-hidden rounded-full"
-            style={{ ...pos, width: pos.size, height: pos.size }}
-            initial={{ opacity: 0, scale: 0.6 }}
-            animate={{ opacity: 0.15, scale: 1, y: [0, -12, 0] }}
-            transition={{
-              opacity: { delay: pos.delay, duration: 0.6 },
-              scale:   { delay: pos.delay, duration: 0.6 },
-              y:       { delay: pos.delay, duration: 4, repeat: Infinity, ease: 'easeInOut' },
-            }}
-          >
-            <img src={food.image_url} alt="" draggable={false} className="h-full w-full object-cover" />
-          </motion.div>
-        )
-      })}
-
       {/* ALU wordmark */}
       <motion.div
         className="absolute top-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center"
