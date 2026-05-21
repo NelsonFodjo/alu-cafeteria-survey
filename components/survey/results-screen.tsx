@@ -394,7 +394,7 @@ export function ResultsScreen({ foodItems }: { foodItems: FoodItem[] }) {
         {/* Retake */}
         {studentId && (
           <motion.button onClick={() => setShowRetake(true)}
-            className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl border border-border py-4 text-[15px] text-muted-foreground transition-all hover:border-foreground/30 hover:text-foreground"
+            className="mt-8 flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border border-border py-4 text-[15px] text-muted-foreground transition-all hover:border-foreground/30 hover:text-foreground"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
             whileTap={{ scale: 0.98 }}>
             <RotateCcw className="h-4 w-4" /> Retake Survey
@@ -412,7 +412,7 @@ export function ResultsScreen({ foodItems }: { foodItems: FoodItem[] }) {
             exit={{ opacity: 0 }}
             onClick={() => setExpandedItem(null)}
           >
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <div className="absolute inset-0 cursor-pointer bg-black/60 backdrop-blur-sm" />
             <motion.div
               className="relative w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-card shadow-2xl"
               initial={{ scale: 0.85, opacity: 0, y: 40 }}
@@ -425,7 +425,7 @@ export function ResultsScreen({ foodItems }: { foodItems: FoodItem[] }) {
                 <img src={expandedItem.image_url} alt={expandedItem.name} className="h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
                 <button onClick={() => setExpandedItem(null)}
-                  className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm">
+                  className="absolute right-3 top-3 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm">
                   <X className="h-4 w-4" />
                 </button>
                 <div className="absolute bottom-3 left-4">

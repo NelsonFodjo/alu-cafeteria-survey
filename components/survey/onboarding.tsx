@@ -66,7 +66,7 @@ export function IntroScreen({ liveCount = 0 }: { liveCount?: number }) {
   return (
     <motion.div
       className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden bg-background"
-      style={{ background: 'radial-gradient(ellipse 90% 70% at 50% -5%, color-mix(in srgb, var(--primary) 12%, transparent), var(--background))' }}
+      style={{ background: 'radial-gradient(ellipse 90% 70% at 50% -5%, color-mix(in srgb, var(--primary) 12%, transparent), var(--background))', cursor: 'pointer' }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, scale: 0.96 }}
@@ -150,7 +150,7 @@ export function IntroScreen({ liveCount = 0 }: { liveCount?: number }) {
       {/* Skip button */}
       <motion.button
         onClick={(e) => { e.stopPropagation(); setScreen('email') }}
-        className="absolute right-6 top-6 z-20 rounded-full bg-foreground/[0.06] px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground"
+        className="absolute right-6 top-6 z-20 cursor-pointer rounded-full bg-foreground/[0.06] px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground"
         whileTap={{ scale: 0.95 }}
       >
         Skip →
@@ -241,7 +241,7 @@ export function EmailScreen() {
           <button
             type="submit"
             disabled={!email || isLoading}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-[16px] font-semibold text-primary-foreground transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-[16px] font-semibold text-primary-foreground transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <>Continue <ArrowRight className="h-4 w-4" /></>}
           </button>
@@ -428,7 +428,7 @@ export function CountryScreen() {
         <button
           onClick={handleContinue}
           disabled={!country || isLoading}
-          className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-[16px] font-semibold text-primary-foreground transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-35"
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-[16px] font-semibold text-primary-foreground transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-35"
         >
           {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <>Let's go <ArrowRight className="h-4 w-4" /></>}
         </button>

@@ -277,7 +277,7 @@ export function SwipeScreen({ foodItems }: { foodItems: FoodItem[] }) {
       <div className="relative z-10 mt-7 flex items-center gap-8">
         <motion.button
           onClick={() => swipeCard('left')}
-          className="flex h-[64px] w-[64px] cursor-pointer items-center justify-center rounded-full border-2 border-red-500/40 bg-red-500/15 text-red-500 shadow-xl shadow-red-500/10 backdrop-blur-sm transition-all hover:bg-red-500/25 disabled:opacity-40"
+          className="flex h-[64px] w-[64px] cursor-pointer items-center justify-center rounded-full border-2 border-red-500/40 bg-red-500/15 text-red-500 shadow-xl shadow-red-500/10 backdrop-blur-sm transition-all hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-40"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.85 }}
           disabled={isAnimating}
@@ -287,7 +287,7 @@ export function SwipeScreen({ foodItems }: { foodItems: FoodItem[] }) {
 
         <motion.button
           onClick={() => swipeCard('right')}
-          className="flex h-[64px] w-[64px] cursor-pointer items-center justify-center rounded-full border-2 border-emerald-500/40 bg-emerald-500/15 text-emerald-500 shadow-xl shadow-emerald-500/10 backdrop-blur-sm transition-all hover:bg-emerald-500/25 disabled:opacity-40"
+          className="flex h-[64px] w-[64px] cursor-pointer items-center justify-center rounded-full border-2 border-emerald-500/40 bg-emerald-500/15 text-emerald-500 shadow-xl shadow-emerald-500/10 backdrop-blur-sm transition-all hover:bg-emerald-500/25 disabled:cursor-not-allowed disabled:opacity-40"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.85 }}
           disabled={isAnimating}

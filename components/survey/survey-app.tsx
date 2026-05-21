@@ -9,6 +9,7 @@ import { CategoryTransition, DislikeDetailScreen, FeedbackDetailScreen, OpenFeed
 import { SwipeScreen } from './swipe-screen'
 import { ResultsScreen } from './results-screen'
 import { Loader2 } from 'lucide-react'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 export function SurveyApp() {
   const { screen, currentCategory } = useSurveyStore()
@@ -50,6 +51,8 @@ export function SurveyApp() {
   }
 
   return (
+    <>
+    <ThemeToggle />
     <AnimatePresence mode="wait">
       {screen === 'intro'               && <IntroScreen key="intro" liveCount={liveCount} />}
       {screen === 'email'               && <EmailScreen key="email" />}
@@ -66,5 +69,6 @@ export function SurveyApp() {
       {screen === 'open-feedback'       && <OpenFeedbackScreen key="open-feedback" />}
       {screen === 'results'             && <ResultsScreen key="results" foodItems={foodItems} />}
     </AnimatePresence>
+    </>
   )
 }

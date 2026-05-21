@@ -188,6 +188,7 @@ function SwipeDemo({ foodItems, onDone }: { foodItems: FoodItem[]; onDone: () =>
 =======
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}
       onClick={advance}
+      style={{ cursor: 'pointer' }}
     >
       {/* Subtle radial glow */}
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 40%, color-mix(in srgb, var(--primary) 10%, transparent), transparent)' }} />
@@ -384,7 +385,7 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
           <p className="text-muted-foreground">{"That's amazing. Let's wrap up."}</p>
           <button
             onClick={() => setScreen('open-feedback')}
-            className="mt-4 flex items-center gap-2 rounded-2xl bg-primary px-8 py-4 text-[16px] font-semibold text-primary-foreground hover:opacity-90"
+            className="mt-4 flex cursor-pointer items-center gap-2 rounded-2xl bg-primary px-8 py-4 text-[16px] font-semibold text-primary-foreground hover:opacity-90"
           >
             Continue <ArrowRight className="h-4 w-4" />
           </button>
@@ -548,13 +549,16 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
           )}
         </AnimatePresence>
 
-        <button
+        <motion.button
           onClick={handleFeedback}
           className={`flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-[16px] font-semibold transition-all ${
             selectionMet
-              ? 'bg-primary text-primary-foreground hover:opacity-90'
-              : 'bg-foreground/10 text-foreground/40 cursor-not-allowed'
+              ? 'cursor-pointer bg-primary text-primary-foreground hover:opacity-90'
+              : 'cursor-not-allowed bg-foreground/10 text-foreground/40'
           }`}
+          whileTap={selectionMet ? { scale: 0.97 } : {}}
+          whileHover={selectionMet ? { scale: 1.02 } : {}}
+          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
         >
 <<<<<<< HEAD
           Give Feedback
@@ -565,8 +569,12 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
 >>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
 =======
           Give Feedback ({selectedDislikedIds.length}) <ArrowRight className="h-4 w-4" />
+<<<<<<< HEAD
 >>>>>>> d6e42a5 (Refactor DislikeDetailScreen for improved user feedback and layout adjustments)
         </button>
+=======
+        </motion.button>
+>>>>>>> cc35c3c (Adjusted project configuration and settings)
       </div>
     </motion.div>
   )
@@ -618,18 +626,20 @@ export function FeedbackDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
 >>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
   return (
     <motion.div
-      className="fixed inset-0 flex flex-col bg-background"
+      className="fixed inset-0 flex flex-col items-center justify-center bg-background px-6"
       style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 0%, color-mix(in srgb, var(--primary) 9%, transparent), var(--background))' }}
       initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="flex flex-1 flex-col px-6 pb-8 pt-10">
-        {/* Progress dots across selected items */}
-        <div className="mb-6 flex justify-center gap-1.5">
+      {/* ~70% width, centered, compact */}
+      <div className="w-full max-w-[70%]">
+        {/* Progress dots */}
+        <div className="mb-5 flex justify-center gap-1.5">
           {selectedDislikedIds.map((_, i) => (
             <div
               key={i}
               className={`h-[3px] rounded-full transition-all duration-300 ${
+<<<<<<< HEAD
 <<<<<<< HEAD
                 i < currentFeedbackIndex  ? 'w-4 bg-primary/40' :
                 i === currentFeedbackIndex ? 'w-7 bg-primary' :
@@ -639,27 +649,35 @@ export function FeedbackDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
                 i === currentFeedbackIndex  ? 'w-7 bg-primary' :
                                              'w-[5px] bg-foreground/12'
 >>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
+=======
+                i < currentFeedbackIndex  ? 'w-4 bg-primary/40' :
+                i === currentFeedbackIndex ? 'w-7 bg-primary' :
+                                            'w-[5px] bg-foreground/12'
+>>>>>>> cc35c3c (Adjusted project configuration and settings)
               }`}
             />
           ))}
         </div>
 
         <motion.div
-          className="mx-auto mb-5 overflow-hidden rounded-2xl border border-border"
+          className="mb-4 flex justify-center"
           initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 260, damping: 22 }}
         >
-          <img src={currentItem.image_url} alt={currentItem.name} className="h-28 w-28 object-cover" />
+          <div className="h-[120px] w-[120px] overflow-hidden rounded-2xl border border-border shadow-md">
+            <img src={currentItem.image_url} alt={currentItem.name} className="h-full w-full object-cover" />
+          </div>
         </motion.div>
 
         <motion.h2
-          className="mb-6 text-center text-2xl font-bold text-foreground"
+          className="mb-5 text-center text-xl font-bold text-foreground"
           style={{ fontFamily: 'var(--font-heading)' }}
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
         >
           {currentItem.name}
         </motion.h2>
 
+<<<<<<< HEAD
         <div className="flex flex-1 flex-col gap-4">
 <<<<<<< HEAD
           <div>
@@ -675,11 +693,14 @@ export function FeedbackDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
           <div>
             <label className="mb-2 block text-sm font-medium text-muted-foreground">What would you suggest instead?</label>
 =======
+=======
+        <div className="flex flex-col gap-3">
+>>>>>>> cc35c3c (Adjusted project configuration and settings)
           {/* Required field */}
           <div>
-            <div className="mb-2 flex items-center justify-between">
+            <div className="mb-1.5 flex items-center justify-between">
               <label className="text-sm font-semibold text-foreground">
-                What's wrong with it? <span className="text-destructive">*</span>
+                What's wrong? <span className="text-destructive">*</span>
               </label>
               <span className={`text-[11px] tabular-nums ${showError && !isWhatIsWrongFilled ? 'text-destructive' : 'text-muted-foreground'}`}>
                 {charCount} chars
@@ -688,20 +709,20 @@ export function FeedbackDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
             <textarea
               value={whatIsWrong}
               onChange={(e) => { setWhatIsWrong(e.target.value); if (e.target.value.trim()) setShowError(false) }}
-              placeholder="Tell us what you dislike about it…"
-              className={`w-full resize-none rounded-2xl border bg-card p-4 text-[15px] text-foreground placeholder:text-muted-foreground focus:outline-none transition-colors ${
+              placeholder="Tell us what you dislike…"
+              className={`w-full resize-none rounded-xl border bg-card p-3 text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none transition-colors ${
                 showError && !isWhatIsWrongFilled
                   ? 'border-destructive focus:border-destructive'
                   : isWhatIsWrongFilled
                     ? 'border-primary/50 focus:border-primary/70'
                     : 'border-border focus:border-primary/50'
               }`}
-              rows={3}
+              rows={2}
             />
             <AnimatePresence>
               {showError && !isWhatIsWrongFilled && (
-                <motion.p className="mt-1.5 text-xs text-destructive" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                  This field is required — please tell us what you disliked.
+                <motion.p className="mt-1 text-xs text-destructive" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                  Required — tell us what you disliked.
                 </motion.p>
               )}
             </AnimatePresence>
@@ -709,30 +730,37 @@ export function FeedbackDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
 
           {/* Optional field */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-muted-foreground">
-              What would you suggest instead? <span className="text-muted-foreground/50 text-xs font-normal">(optional)</span>
+            <label className="mb-1.5 block text-sm font-semibold text-foreground">
+              Suggestion? 
             </label>
 >>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
             <textarea
               value={suggestion}
               onChange={(e) => setSuggestion(e.target.value)}
-              placeholder="Share your ideas for improvement…"
-              className="w-full resize-none rounded-2xl border border-border bg-card p-4 text-[15px] text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none transition-colors"
-              rows={3}
+              placeholder="Any ideas for improvement…"
+              className="w-full resize-none rounded-xl border border-border bg-card p-3 text-[14px] text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none transition-colors"
+              rows={2}
             />
           </div>
         </div>
 
-        <button
+        <motion.button
           onClick={handleNext}
+<<<<<<< HEAD
 <<<<<<< HEAD
           className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-[16px] font-semibold text-primary-foreground hover:opacity-90"
 =======
           className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-[16px] font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
 >>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
+=======
+          className="mt-5 flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-[15px] font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
+          whileTap={{ scale: 0.97 }}
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+>>>>>>> cc35c3c (Adjusted project configuration and settings)
         >
           {isLast ? 'Continue' : 'Next'} <ArrowRight className="h-4 w-4" />
-        </button>
+        </motion.button>
       </div>
     </motion.div>
   )
@@ -853,7 +881,7 @@ export function OpenFeedbackScreen() {
         <button
           onClick={handleSubmit}
           disabled={isLoading}
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-[16px] font-semibold text-primary-foreground transition-all hover:opacity-90 disabled:opacity-50"
+          className="mt-5 flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-[16px] font-semibold text-primary-foreground transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Submit Survey →'}
         </button>
