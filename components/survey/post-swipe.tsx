@@ -387,6 +387,10 @@ export function FeedbackDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
   const currentItem = foodItems.find((item) => item.id === currentItemId)
   const isLast = currentFeedbackIndex + 1 >= selectedDislikedIds.length
 
+  useEffect(() => {
+    if (!currentItem) setScreen('open-feedback')
+  }, [currentItem, setScreen])
+
   const handleNext = () => {
     if (!whatIsWrong.trim()) { setShowError(true); return }
     updateResponse(currentItemId, { what_is_wrong: whatIsWrong.trim(), suggestion: suggestion.trim() })
@@ -397,7 +401,7 @@ export function FeedbackDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
     else setScreen('open-feedback')
   }
 
-  if (!currentItem) { setScreen('open-feedback'); return null }
+  if (!currentItem) return null
 
   const charCount = whatIsWrong.length
   const isWhatIsWrongFilled = whatIsWrong.trim().length > 0
@@ -556,43 +560,43 @@ export function OpenFeedbackScreen() {
       initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="flex flex-1 flex-col px-6 pb-8 pt-10">
+      <div className="flex flex-1 flex-col px-6 pb-6 pt-8">
         <motion.h1
-          className="mb-2 text-center text-3xl font-bold text-foreground"
+          className="mb-1 text-center text-2xl font-bold text-foreground"
           style={{ fontFamily: 'var(--font-heading)' }}
           initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
         >
           Anything else?
         </motion.h1>
         <motion.p
-          className="mb-6 text-center text-[14px] text-muted-foreground"
+          className="mb-4 text-center text-[13px] text-muted-foreground"
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
         >
           {"We're listening. Tell us everything."}
         </motion.p>
 
         <motion.div
-          className="mb-5 overflow-hidden rounded-2xl border border-border bg-card"
+          className="mb-4 overflow-hidden rounded-xl border border-border bg-card"
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14 }}
         >
-          <div className="flex items-center gap-4 p-4">
+          <div className="flex items-center gap-3 px-4 py-3">
             <div className="text-center">
-              <p className="text-2xl font-bold text-emerald-500">{totalLiked}</p>
-              <p className="text-xs text-muted-foreground">liked</p>
+              <p className="text-lg font-bold text-emerald-500">{totalLiked}</p>
+              <p className="text-[11px] text-muted-foreground">liked</p>
             </div>
             <div className="flex-1">
-              <div className="h-2 overflow-hidden rounded-full bg-foreground/[0.08]">
+              <div className="h-1.5 overflow-hidden rounded-full bg-foreground/[0.08]">
                 <motion.div
                   className="h-full rounded-full bg-emerald-500"
                   initial={{ width: 0 }} animate={{ width: `${likedPct}%` }}
                   transition={{ duration: 0.9, delay: 0.3, ease: 'easeOut' }}
                 />
               </div>
-              <p className="mt-1.5 text-center text-[11px] text-muted-foreground">{responses.length} items rated</p>
+              <p className="mt-1 text-center text-[10px] text-muted-foreground">{responses.length} items rated</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-red-500">{totalDisliked}</p>
-              <p className="text-xs text-muted-foreground">disliked</p>
+              <p className="text-lg font-bold text-red-500">{totalDisliked}</p>
+              <p className="text-[11px] text-muted-foreground">disliked</p>
             </div>
           </div>
         </motion.div>
@@ -602,12 +606,12 @@ export function OpenFeedbackScreen() {
             value={openFeedback}
             onChange={(e) => setOpenFeedback(e.target.value)}
             placeholder="Suggestions, complaints, praise, new dish ideas — anything goes…"
-            className="h-full min-h-[160px] w-full resize-none rounded-2xl border border-border bg-card p-4 text-[15px] text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none transition-colors"
+            className="h-full min-h-[120px] w-full resize-none rounded-xl border border-border bg-card p-3 text-[14px] text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none transition-colors"
           />
         </motion.div>
 
         {error && (
-          <motion.p className="mt-3 text-center text-sm text-destructive" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <motion.p className="mt-2 text-center text-sm text-destructive" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             {error}
           </motion.p>
         )}
@@ -615,9 +619,9 @@ export function OpenFeedbackScreen() {
         <button
           onClick={handleSubmit}
           disabled={isLoading}
-          className="mt-5 flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-[16px] font-semibold text-primary-foreground transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-4 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-[15px] font-semibold text-primary-foreground transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Submit Survey →'}
+          {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Submit Survey →'}
         </button>
       </div>
     </motion.div>

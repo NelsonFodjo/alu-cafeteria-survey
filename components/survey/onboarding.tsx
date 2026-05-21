@@ -101,8 +101,8 @@ export function IntroScreen({ liveCount = 0 }: { liveCount?: number }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
       >
-        <span className="text-2xl font-black tracking-tight text-primary" style={{ fontFamily: 'var(--font-heading)' }}>ALCHE </span>
-        <span className="text-xs font-medium text-muted-foreground">Cafeteria Survey</span>
+        <div className="text-2xl font-black tracking-tight text-primary" style={{ fontFamily: 'var(--font-heading)' }}>ALCHE </div>
+        <div className="text-xs font-medium text-muted-foreground">Cafeteria Survey</div>
       </motion.div>
 
       {/* Cycling slide text */}
