@@ -278,31 +278,33 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
 
   return (
     <motion.div
-      className="fixed inset-0 flex flex-col items-center justify-center bg-background px-6"
+      className="fixed inset-0 flex flex-col bg-background"
       style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 0%, color-mix(in srgb, var(--primary) 9%, transparent), var(--background))' }}
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
     >
-      <div className="w-full max-w-sm">
-
+      {/* Header */}
+      <div className="shrink-0 px-6 pb-3 pt-10">
         <motion.h1
-          className="mb-3 text-center text-3xl font-bold text-foreground"
+          className="mb-2 text-center text-3xl font-bold text-foreground"
           style={{ fontFamily: 'var(--font-heading)' }}
           initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
         >
           You didn't like these 👀
         </motion.h1>
-
         <motion.p
-          className="mb-5 text-center text-[14px] leading-relaxed text-muted-foreground"
+          className="text-center text-[13px] leading-relaxed text-muted-foreground"
           initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
         >
           {total >= 2
-            ? `We need you to select two or more from this list to provide more feedback to help us understand what's wrong with them. You're free to tell us that you just don't like them — that's already helpful.`
-            : `Let us know if you'd like to give any feedback on this item. You're free to simply say you don't like it — that's enough.`}
+            ? `Select two or more to give feedback on what's wrong.`
+            : `Let us know if you'd like to give any feedback on this item.`}
         </motion.p>
+      </div>
 
+      {/* Scrollable items */}
+      <div className="flex-1 overflow-y-auto px-6 py-4">
         <motion.div
-          className="mb-5 flex flex-wrap justify-center gap-3"
+          className="flex flex-wrap justify-center gap-3"
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14 }}
         >
           {dislikedItems.map((item, i) => {
@@ -327,9 +329,7 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
                 }`}>
                   {isSelected && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
                 </div>
-
                 <img src={item.image_url} alt={item.name} className="aspect-square w-full object-cover" />
-
                 <div className={`px-1.5 py-1.5 transition-colors ${isSelected ? 'bg-primary/15' : 'bg-card'}`}>
                   <p className={`truncate text-center text-[10px] font-semibold ${isSelected ? 'text-primary' : 'text-muted-foreground'}`}>
                     {item.name}
@@ -339,7 +339,10 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
             )
           })}
         </motion.div>
+      </div>
 
+      {/* Sticky footer */}
+      <div className="shrink-0 px-6 pb-8 pt-3">
         <AnimatePresence>
           {showError && !selectionMet && (
             <motion.p
@@ -352,7 +355,6 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
             </motion.p>
           )}
         </AnimatePresence>
-
         <motion.button
           onClick={handleFeedback}
           className={`flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-[16px] font-semibold transition-all ${

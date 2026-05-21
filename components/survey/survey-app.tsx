@@ -12,19 +12,19 @@ import { Loader2 } from 'lucide-react'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 export function SurveyApp() {
-  const { screen, currentCategory, studentId, email, resetSurvey } = useSurveyStore()
+  const { screen, currentCategory, resetSurvey } = useSurveyStore()
   const [foodItems, setFoodItems] = useState<FoodItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [liveCount, setLiveCount] = useState(0)
 
-  // On mount: verify persisted session still exists in DB, reset if not
+  // On mount: if user has progressed past email, verify their record still exists in DB
+  // If DB was cleared, reset everything so they can retake from scratch
   useEffect(() => {
-    if (!studentId && !email) return
+    const { email: persistedEmail, screen: persistedScreen } = useSurveyStore.getState()
+    if (!persistedEmail || persistedScreen === 'intro' || persistedScreen === 'email') return
     const supabase = createClient()
-    const check = studentId
-      ? supabase.from('students').select('id').eq('id', studentId).maybeSingle()
-      : supabase.from('students').select('id').eq('email', email).maybeSingle()
-    check.then(({ data }) => { if (!data) resetSurvey() })
+    supabase.from('students').select('id').eq('email', persistedEmail).maybeSingle()
+      .then(({ data }) => { if (!data) resetSurvey() })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Fetch all active food items once on mount
