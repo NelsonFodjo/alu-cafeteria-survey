@@ -560,7 +560,7 @@ export function OpenFeedbackScreen() {
       initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="flex flex-1 flex-col px-6 pb-6 pt-8">
+      <div className="flex flex-1 flex-col px-6 pb-6 pt-8 w-full max-w-sm mx-auto">
         <motion.h1
           className="mb-1 text-center text-2xl font-bold text-foreground"
           style={{ fontFamily: 'var(--font-heading)' }}
