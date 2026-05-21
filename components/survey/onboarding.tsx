@@ -96,12 +96,12 @@ export function IntroScreen({ liveCount = 0 }: { liveCount?: number }) {
 
       {/* ALU wordmark */}
       <motion.div
-        className="absolute top-8 left-1/2 -translate-x-1/2 z-20 flex items-baseline gap-2"
+        className="absolute top-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center"
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
       >
-        <div className="text-2xl font-black tracking-tight text-primary" style={{ fontFamily: 'var(--font-heading)' }}>ALCHE </div>
+        <div className="text-2xl font-black tracking-tight text-primary" style={{ fontFamily: 'var(--font-heading)' }}>ALCHE</div>
         <div className="text-xs font-medium text-muted-foreground">Cafeteria Survey</div>
       </motion.div>
 
@@ -150,7 +150,7 @@ export function IntroScreen({ liveCount = 0 }: { liveCount?: number }) {
       {/* Skip button */}
       <motion.button
         onClick={(e) => { e.stopPropagation(); setScreen('email') }}
-        className="absolute right-6 top-6 z-20 cursor-pointer rounded-full bg-foreground/[0.06] px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground"
+        className="absolute bottom-6 right-6 z-20 cursor-pointer rounded-full bg-foreground/[0.06] px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/10 hover:text-foreground"
         whileTap={{ scale: 0.95 }}
       >
         Skip →
@@ -197,15 +197,6 @@ export function EmailScreen() {
       {...slideIn}
     >
       <div className="w-full max-w-sm">
-        <motion.div
-          className="mb-8 flex justify-center"
-          initial={{ scale: 0, rotate: -20 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
-        >
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-4xl">👋</div>
-        </motion.div>
-
         <motion.h1
           className="mb-2 text-center text-4xl font-bold text-foreground"
           style={{ fontFamily: 'var(--font-heading)' }}

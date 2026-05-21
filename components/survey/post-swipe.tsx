@@ -518,7 +518,7 @@ export function OpenFeedbackScreen() {
   const likedPct = responses.length > 0 ? Math.round((totalLiked / responses.length) * 100) : 0
 
   const handleSubmit = async () => {
-    if (!studentId) return
+    if (!studentId) { setError('Session lost — please refresh and try again.'); return }
     setIsLoading(true)
     setError('')
     try {
@@ -546,7 +546,8 @@ export function OpenFeedbackScreen() {
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 }, colors: ['#F5A623', '#22c55e', '#ffffff'] })
       setIsDone(true)
       setTimeout(() => setScreen('results'), 1000)
-    } catch {
+    } catch (err) {
+      console.error('Survey submit error:', err)
       setError('Something went wrong. Please try again.')
     } finally {
       setIsLoading(false)

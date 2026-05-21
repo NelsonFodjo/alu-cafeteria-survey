@@ -133,6 +133,14 @@ export const useSurveyStore = create<SurveyStore>()(
     }),
     {
       name: 'alu-cafeteria-survey',
+      partialize: (state) => ({
+        screen: state.screen,
+        email: state.email,
+        gender: state.gender,
+        country: state.country,
+        studentId: state.studentId,
+        isDone: state.isDone,
+      }),
     }
   )
 )

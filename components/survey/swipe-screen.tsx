@@ -26,7 +26,6 @@ export function SwipeScreen({ foodItems }: { foodItems: FoodItem[] }) {
   const categoryItems = foodItems.filter((item) => item.category === currentCategory)
   const currentItem = categoryItems[currentCardIndex]
   const nextItem = categoryItems[currentCardIndex + 1]
-  const categoryIndex = CATEGORIES.indexOf(currentCategory)
   const config = CATEGORY_CONFIG[currentCategory]
 
   const totalItems = foodItems.length
@@ -44,8 +43,12 @@ export function SwipeScreen({ foodItems }: { foodItems: FoodItem[] }) {
   }, [currentCardIndex, currentCategory])
 
   const advanceCard = useCallback(() => {
-    if (currentCardIndex + 1 >= categoryItems.length) {
-      const nextIdx = categoryIndex + 1
+    const { currentCategory, currentCardIndex: idx } = useSurveyStore.getState()
+    const catItems = foodItems.filter((item) => item.category === currentCategory)
+    const catIndex = CATEGORIES.indexOf(currentCategory)
+
+    if (idx + 1 >= catItems.length) {
+      const nextIdx = catIndex + 1
       if (nextIdx < CATEGORIES.length) {
         const nextCat = CATEGORIES[nextIdx]
         confetti({ particleCount: 55, spread: 65, origin: { y: 0.6 }, gravity: 2.2, scalar: 0.7, colors: ['#F5A623', '#22c55e', '#ffffff'] })
@@ -54,13 +57,14 @@ export function SwipeScreen({ foodItems }: { foodItems: FoodItem[] }) {
         setNextCatAnnouncement(nextCat)
         setTimeout(() => setNextCatAnnouncement(null), 2200)
       } else {
-        setScreen('dislike-detail')
+        const allLiked = useSurveyStore.getState().responses.every((r) => r.liked)
+        setScreen(allLiked ? 'open-feedback' : 'dislike-detail')
       }
     } else {
-      setCurrentCardIndex(currentCardIndex + 1)
+      setCurrentCardIndex(idx + 1)
     }
     setIsAnimating(false)
-  }, [currentCardIndex, categoryItems.length, categoryIndex, setCurrentCategory, setCurrentCardIndex, setScreen])
+  }, [foodItems, setCurrentCategory, setCurrentCardIndex, setScreen])
 
   const swipeCard = useCallback(
     (direction: 'left' | 'right') => {
@@ -154,11 +158,6 @@ export function SwipeScreen({ foodItems }: { foodItems: FoodItem[] }) {
             animate={{ width: `${globalProgress}%` }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
           />
-        </div>
-        <div className="flex justify-end px-4 pt-1">
-          <span className="text-[11px] tabular-nums text-muted-foreground">
-            {answeredItems} / {totalItems}
-          </span>
         </div>
       </div>
 
