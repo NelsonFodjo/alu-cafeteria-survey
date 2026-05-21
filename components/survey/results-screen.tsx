@@ -257,7 +257,7 @@ export function ResultsScreen({ foodItems }: { foodItems: FoodItem[] }) {
                     transition={{ duration: 0.9, delay: 0.2 + i * 0.1, ease: 'easeOut' }}
                   />
                 </div>
-                <p className="mt-0.5 text-right text-[10px] text-muted-foreground">{total} votes</p>
+                <p className="mt-0.5 text-right text-[10px] text-muted-foreground">{total} Likes</p>
               </div>
             ))}
           </div>
