@@ -2,27 +2,6 @@
 
 // ─── Post-swipe screens: CategoryTransition → DislikeDetail → FeedbackDetail → OpenFeedback ──
 
-<<<<<<< HEAD
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { useSurveyStore } from '@/lib/store'
-import { createClient, CATEGORIES, CATEGORY_CONFIG, type Category, type FoodItem } from '@/lib/utils'
-import { Check, ArrowRight, Loader2 } from 'lucide-react'
-import confetti from 'canvas-confetti'
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// CategoryTransition — shown briefly when moving to the next food category
-// ═══════════════════════════════════════════════════════════════════════════════
-export function CategoryTransition({ category }: { category: Category }) {
-  const setScreen = useSurveyStore((s) => s.setScreen)
-  const categoryIndex = CATEGORIES.indexOf(category)
-  const config = CATEGORY_CONFIG[category]
-
-  useEffect(() => {
-    const t = setTimeout(() => setScreen('swipe'), 1800)
-    return () => clearTimeout(t)
-  }, [setScreen])
-=======
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSurveyStore } from '@/lib/store'
@@ -92,14 +71,12 @@ export function CategoryTransition({ category, foodItems }: { category: Category
 
 // ── SwipeDemo — animated tutorial with two real food images ──────────────────
 function SwipeDemo({ foodItems, onDone }: { foodItems: FoodItem[]; onDone: () => void }) {
-  // Pick two distinct food items to use as demo cards
   const [card1, card2] = foodItems.length >= 2
     ? [foodItems[0], foodItems[1]]
     : [null, null]
 
-  // Demo plays in 3 phases: 'idle' → 'swipe-right' → 'swipe-left' → done
   const [phase, setPhase] = useState<'idle' | 'right' | 'left' | 'done'>('idle')
-  const [dismissed, setDismissed] = useState(false) // true after first card exits
+  const [dismissed, setDismissed] = useState(false)
   const doneRef = useRef(false)
 
   const advance = () => {
@@ -109,12 +86,9 @@ function SwipeDemo({ foodItems, onDone }: { foodItems: FoodItem[]; onDone: () =>
   }
 
   useEffect(() => {
-    // After a short pause, animate swipe right on card 1
     const t1 = setTimeout(() => setPhase('right'), 900)
-    // After card 1 exits, show card 2 and animate swipe left
     const t2 = setTimeout(() => { setDismissed(true); setPhase('idle') }, 1600)
     const t3 = setTimeout(() => setPhase('left'), 2400)
-    // Finish and proceed to real swipe screen
     const t4 = setTimeout(advance, 3400)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -126,74 +100,16 @@ function SwipeDemo({ foodItems, onDone }: { foodItems: FoodItem[]; onDone: () =>
 
   const likeOpacity = phase === 'right' ? 1 : 0
   const nopeOpacity = phase === 'left' ? 1 : 0
->>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
 
   return (
     <motion.div
       className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden bg-background"
-<<<<<<< HEAD
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-    >
-      {/* Radial glow */}
-      <motion.div
-        className="absolute inset-0"
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
-        style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 50%, color-mix(in srgb, var(--primary) 15%, transparent), transparent)' }}
-      />
-
-      {/* Category progress dots */}
-      <motion.div
-        className="absolute top-14 flex gap-2"
-        initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-      >
-        {CATEGORIES.map((cat, i) => (
-          <div
-            key={cat}
-            className={`rounded-full transition-all duration-500 ${
-              i < categoryIndex  ? 'h-2 w-2 bg-primary/50' :
-              i === categoryIndex ? 'h-2 w-8 bg-primary' :
-                                   'h-2 w-2 bg-foreground/15'
-            }`}
-          />
-        ))}
-      </motion.div>
-
-      <div className="relative z-10 flex flex-col items-center gap-5">
-        <motion.span
-          className="text-[88px] leading-none"
-          initial={{ scale: 0.3, opacity: 0, rotate: -20 }}
-          animate={{ scale: 1, opacity: 1, rotate: 0 }}
-          transition={{ type: 'spring', stiffness: 220, damping: 16, delay: 0.1 }}
-        >
-          {config.emoji}
-        </motion.span>
-        <motion.div
-          className="flex flex-col items-center gap-1"
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <p className="text-sm font-medium uppercase tracking-[0.2em] text-primary">Up next</p>
-          <h1 className="text-6xl font-bold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
-            {config.label}
-          </h1>
-        </motion.div>
-      </div>
-
-      {/* Loading bar that fills over 1.8 s to signal auto-advance */}
-      <motion.div
-        className="absolute bottom-0 left-0 h-[2px] bg-primary/50"
-        initial={{ width: '0%' }} animate={{ width: '100%' }}
-        transition={{ duration: 1.8, ease: 'linear' }}
-      />
-=======
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}
       onClick={advance}
       style={{ cursor: 'pointer' }}
     >
-      {/* Subtle radial glow */}
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 40%, color-mix(in srgb, var(--primary) 10%, transparent), transparent)' }} />
 
-      {/* Header */}
       <motion.div
         className="absolute top-12 left-0 right-0 flex flex-col items-center gap-1 px-8 text-center"
         initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
@@ -204,10 +120,8 @@ function SwipeDemo({ foodItems, onDone }: { foodItems: FoodItem[]; onDone: () =>
         </h1>
       </motion.div>
 
-      {/* Card stack */}
       {card1 && card2 && (
         <div className="relative w-full max-w-[280px]" style={{ height: '52vh' }}>
-          {/* Card 2 (behind) — revealed after card 1 leaves */}
           {dismissed && (
             <motion.div
               className="absolute inset-0 overflow-hidden rounded-[24px] shadow-xl"
@@ -220,14 +134,12 @@ function SwipeDemo({ foodItems, onDone }: { foodItems: FoodItem[]; onDone: () =>
               <div className="absolute inset-x-0 bottom-0 p-4">
                 <p className="text-xl font-bold text-white" style={{ fontFamily: 'var(--font-heading)' }}>{card2.name}</p>
               </div>
-              {/* NOPE overlay always visible on card 2 */}
               <motion.div className="pointer-events-none absolute inset-0" style={{ opacity: nopeOpacity }} transition={{ duration: 0.2 }}>
                 <div className="absolute inset-0 bg-gradient-to-r from-red-500/40 to-transparent" />
                 <div className="absolute right-4 top-10 rotate-[22deg] rounded-xl border-[3px] border-red-400 px-3 py-1">
                   <span className="text-xl font-black tracking-wider text-red-400">NOPE</span>
                 </div>
               </motion.div>
-              {/* Swipe left hint arrow */}
               <AnimatePresence>
                 {phase === 'left' && (
                   <motion.div
@@ -247,7 +159,6 @@ function SwipeDemo({ foodItems, onDone }: { foodItems: FoodItem[]; onDone: () =>
             </motion.div>
           )}
 
-          {/* Card 1 (front) */}
           {!dismissed && (
             <motion.div
               className="absolute inset-0 overflow-hidden rounded-[24px] shadow-2xl"
@@ -259,14 +170,12 @@ function SwipeDemo({ foodItems, onDone }: { foodItems: FoodItem[]; onDone: () =>
               <div className="absolute inset-x-0 bottom-0 p-4">
                 <p className="text-xl font-bold text-white" style={{ fontFamily: 'var(--font-heading)' }}>{card1.name}</p>
               </div>
-              {/* LIKE overlay */}
               <motion.div className="pointer-events-none absolute inset-0" animate={{ opacity: likeOpacity }} transition={{ duration: 0.2 }}>
                 <div className="absolute inset-0 bg-gradient-to-l from-emerald-500/40 to-transparent" />
                 <div className="absolute left-4 top-10 -rotate-[22deg] rounded-xl border-[3px] border-emerald-400 px-3 py-1">
                   <span className="text-xl font-black tracking-wider text-emerald-400">LIKE</span>
                 </div>
               </motion.div>
-              {/* Swipe right hint arrow */}
               <AnimatePresence>
                 {phase === 'right' && (
                   <motion.div
@@ -288,7 +197,6 @@ function SwipeDemo({ foodItems, onDone }: { foodItems: FoodItem[]; onDone: () =>
         </div>
       )}
 
-      {/* Legend below the card */}
       <motion.div
         className="mt-6 flex items-center gap-6"
         initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
@@ -307,25 +215,17 @@ function SwipeDemo({ foodItems, onDone }: { foodItems: FoodItem[]; onDone: () =>
         </div>
       </motion.div>
 
-      {/* Tap-to-skip hint */}
       <motion.p
         className="absolute bottom-8 text-xs text-muted-foreground/60"
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
       >
         Tap anywhere to skip
       </motion.p>
->>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
     </motion.div>
   )
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-<<<<<<< HEAD
-// DislikeDetailScreen — lets user pick which disliked items to give feedback on
-// ═══════════════════════════════════════════════════════════════════════════════
-export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
-  const { getDislikedResponses, selectedDislikedIds, toggleDislikedSelection, setScreen, setCurrentFeedbackIndex } = useSurveyStore()
-=======
 // DislikeDetailScreen
 // Rules:
 //   - If only 1 disliked item → must select it (auto-select and block skip)
@@ -336,25 +236,12 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
 export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
   const { getDislikedResponses, selectedDislikedIds, toggleDislikedSelection, setScreen, setCurrentFeedbackIndex } = useSurveyStore()
   const [showError, setShowError] = useState(false)
->>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
 
   const dislikedItems = foodItems.filter((item) =>
     getDislikedResponses().some((r) => r.food_item_id === item.id)
   )
 
-<<<<<<< HEAD
-  const handleFeedback = () => {
-    if (selectedDislikedIds.length > 0) {
-      setCurrentFeedbackIndex(0)
-      setScreen('feedback-detail')
-    }
-  }
-
-  // If user liked everything, skip straight to open feedback
-  if (dislikedItems.length === 0) {
-=======
   const total = dislikedItems.length
-  // Minimum selections required
   const minRequired = total <= 3 ? total : 2
   const selectionMet = selectedDislikedIds.length >= minRequired
 
@@ -364,9 +251,7 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
     setScreen('feedback-detail')
   }
 
-  // If user liked everything, skip straight to open feedback
   if (total === 0) {
->>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
     return (
       <motion.div
         className="fixed inset-0 flex flex-col items-center justify-center bg-background px-8"
@@ -394,23 +279,12 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
     )
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-  const requirementLabel = total <= 3
-    ? total === 1 ? 'Select it to give feedback' : `Select all ${total} items to continue`
-    : `Select at least 2 items`
-
->>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
-=======
->>>>>>> d6e42a5 (Refactor DislikeDetailScreen for improved user feedback and layout adjustments)
   return (
     <motion.div
       className="fixed inset-0 flex flex-col items-center justify-center bg-background px-6"
       style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 0%, color-mix(in srgb, var(--primary) 9%, transparent), var(--background))' }}
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
     >
-      {/* All content is centered and compact — never fills the full screen */}
       <div className="w-full max-w-sm">
 
         <motion.h1
@@ -420,21 +294,7 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
         >
           You didn't like these 👀
         </motion.h1>
-<<<<<<< HEAD
-        <motion.p
-          className="text-center text-[14px] text-muted-foreground"
-          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
-        >
-          Tap items you'd like to give feedback on
-        </motion.p>
-      </div>
 
-      <div className="flex-1 overflow-y-auto px-6">
-        <motion.div
-          className="grid grid-cols-3 gap-2.5 pb-4 sm:grid-cols-4"
-=======
-
-        {/* Plain explanatory message — not styled as an achievement or status */}
         <motion.p
           className="mb-5 text-center text-[14px] leading-relaxed text-muted-foreground"
           initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
@@ -444,14 +304,8 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
             : `Let us know if you'd like to give any feedback on this item. You're free to simply say you don't like it — that's enough.`}
         </motion.p>
 
-        {/* Small centered card grid */}
         <motion.div
-<<<<<<< HEAD
-          className="grid grid-cols-3 gap-3 pb-4 sm:grid-cols-4"
->>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
-=======
           className="mb-5 flex flex-wrap justify-center gap-3"
->>>>>>> d6e42a5 (Refactor DislikeDetailScreen for improved user feedback and layout adjustments)
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14 }}
         >
           {dislikedItems.map((item, i) => {
@@ -459,27 +313,6 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
             return (
               <motion.button
                 key={item.id}
-<<<<<<< HEAD
-                onClick={() => toggleDislikedSelection(item.id)}
-                className={`relative cursor-pointer overflow-hidden rounded-2xl border transition-all ${
-                  isSelected ? 'border-primary/60 shadow-md shadow-primary/10' : 'border-border hover:border-foreground/20'
-                }`}
-                initial={{ opacity: 0, scale: 0.88 }} animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: Math.min(i * 0.03, 0.3) }}
-                whileTap={{ scale: 0.94 }}
-              >
-                {isSelected && (
-                  <div className="absolute right-2 top-2 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
-                    <Check className="h-3 w-3 text-primary-foreground" strokeWidth={3} />
-                  </div>
-                )}
-                <img src={item.image_url} alt={item.name} className="aspect-square w-full object-cover" />
-                <div className={`px-2 py-1.5 ${isSelected ? 'bg-primary/10' : 'bg-card'}`}>
-                  <p className={`truncate text-center text-[11px] font-medium ${isSelected ? 'text-primary' : 'text-muted-foreground'}`}>
-                    {item.name}
-                  </p>
-                </div>
-=======
                 onClick={() => { toggleDislikedSelection(item.id); setShowError(false) }}
                 className={`relative w-[88px] cursor-pointer overflow-hidden rounded-2xl border-2 transition-all ${
                   isSelected
@@ -492,7 +325,6 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
                 transition={{ delay: Math.min(i * 0.04, 0.3) }}
                 whileTap={{ scale: 0.93 }}
               >
-                {/* Checkbox in corner */}
                 <div className={`absolute right-1.5 top-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all ${
                   isSelected ? 'border-primary bg-primary' : 'border-white/60 bg-black/30'
                 }`}>
@@ -506,36 +338,11 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
                     {item.name}
                   </p>
                 </div>
-<<<<<<< HEAD
-
-                {/* Full border highlight ring when selected */}
-                {isSelected && (
-                  <div className="pointer-events-none absolute inset-0 rounded-2xl ring-2 ring-primary/40" />
-                )}
->>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
-=======
->>>>>>> d6e42a5 (Refactor DislikeDetailScreen for improved user feedback and layout adjustments)
               </motion.button>
             )
           })}
         </motion.div>
 
-<<<<<<< HEAD
-      <div className="shrink-0 border-t border-border px-6 pb-8 pt-4">
-<<<<<<< HEAD
-        <button
-          onClick={handleFeedback}
-          disabled={selectedDislikedIds.length === 0}
-          className="mb-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-[16px] font-semibold text-primary-foreground transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-35"
-        >
-          Give Feedback ({selectedDislikedIds.length}) <ArrowRight className="h-4 w-4" />
-        </button>
-        <button onClick={() => setScreen('open-feedback')} className="w-full text-center text-sm text-muted-foreground transition-colors hover:text-foreground">
-          Skip →
-=======
-=======
->>>>>>> d6e42a5 (Refactor DislikeDetailScreen for improved user feedback and layout adjustments)
-        {/* Error message on failed attempt */}
         <AnimatePresence>
           {showError && !selectionMet && (
             <motion.p
@@ -560,70 +367,41 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
           whileHover={selectionMet ? { scale: 1.02 } : {}}
           transition={{ type: 'spring', stiffness: 400, damping: 20 }}
         >
-<<<<<<< HEAD
-          Give Feedback
-          <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${selectionMet ? 'bg-white/20' : 'bg-foreground/10'}`}>
-            {selectedDislikedIds.length}
-          </span>
-          <ArrowRight className="h-4 w-4" />
->>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
-=======
           Give Feedback ({selectedDislikedIds.length}) <ArrowRight className="h-4 w-4" />
-<<<<<<< HEAD
->>>>>>> d6e42a5 (Refactor DislikeDetailScreen for improved user feedback and layout adjustments)
-        </button>
-=======
         </motion.button>
->>>>>>> cc35c3c (Adjusted project configuration and settings)
       </div>
     </motion.div>
   )
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-<<<<<<< HEAD
-// FeedbackDetailScreen — per-item feedback for selected dislikes
-=======
 // FeedbackDetailScreen — "what's wrong" is required before proceeding
->>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
 // ═══════════════════════════════════════════════════════════════════════════════
 export function FeedbackDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
   const { selectedDislikedIds, currentFeedbackIndex, setCurrentFeedbackIndex, updateResponse, setScreen } = useSurveyStore()
   const [whatIsWrong, setWhatIsWrong] = useState('')
   const [suggestion, setSuggestion] = useState('')
-<<<<<<< HEAD
-=======
   const [showError, setShowError] = useState(false)
->>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
 
   const currentItemId = selectedDislikedIds[currentFeedbackIndex]
   const currentItem = foodItems.find((item) => item.id === currentItemId)
   const isLast = currentFeedbackIndex + 1 >= selectedDislikedIds.length
 
   const handleNext = () => {
-<<<<<<< HEAD
-    updateResponse(currentItemId, { what_is_wrong: whatIsWrong, suggestion })
-    setWhatIsWrong('')
-    setSuggestion('')
-=======
     if (!whatIsWrong.trim()) { setShowError(true); return }
     updateResponse(currentItemId, { what_is_wrong: whatIsWrong.trim(), suggestion: suggestion.trim() })
     setWhatIsWrong('')
     setSuggestion('')
     setShowError(false)
->>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
     if (!isLast) setCurrentFeedbackIndex(currentFeedbackIndex + 1)
     else setScreen('open-feedback')
   }
 
   if (!currentItem) { setScreen('open-feedback'); return null }
 
-<<<<<<< HEAD
-=======
   const charCount = whatIsWrong.length
   const isWhatIsWrongFilled = whatIsWrong.trim().length > 0
 
->>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
   return (
     <motion.div
       className="fixed inset-0 flex flex-col items-center justify-center bg-background px-6"
@@ -631,29 +409,15 @@ export function FeedbackDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
       initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
     >
-      {/* ~70% width, centered, compact */}
       <div className="w-full max-w-[70%]">
-        {/* Progress dots */}
         <div className="mb-5 flex justify-center gap-1.5">
           {selectedDislikedIds.map((_, i) => (
             <div
               key={i}
               className={`h-[3px] rounded-full transition-all duration-300 ${
-<<<<<<< HEAD
-<<<<<<< HEAD
                 i < currentFeedbackIndex  ? 'w-4 bg-primary/40' :
                 i === currentFeedbackIndex ? 'w-7 bg-primary' :
                                             'w-[5px] bg-foreground/12'
-=======
-                i < currentFeedbackIndex   ? 'w-4 bg-primary/40' :
-                i === currentFeedbackIndex  ? 'w-7 bg-primary' :
-                                             'w-[5px] bg-foreground/12'
->>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
-=======
-                i < currentFeedbackIndex  ? 'w-4 bg-primary/40' :
-                i === currentFeedbackIndex ? 'w-7 bg-primary' :
-                                            'w-[5px] bg-foreground/12'
->>>>>>> cc35c3c (Adjusted project configuration and settings)
               }`}
             />
           ))}
@@ -677,26 +441,7 @@ export function FeedbackDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
           {currentItem.name}
         </motion.h2>
 
-<<<<<<< HEAD
-        <div className="flex flex-1 flex-col gap-4">
-<<<<<<< HEAD
-          <div>
-            <label className="mb-2 block text-sm font-medium text-muted-foreground">What's wrong with it?</label>
-            <textarea
-              value={whatIsWrong}
-              onChange={(e) => setWhatIsWrong(e.target.value)}
-              placeholder="Tell us what you dislike about it…"
-              className="w-full resize-none rounded-2xl border border-border bg-card p-4 text-[15px] text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none transition-colors"
-              rows={3}
-            />
-          </div>
-          <div>
-            <label className="mb-2 block text-sm font-medium text-muted-foreground">What would you suggest instead?</label>
-=======
-=======
         <div className="flex flex-col gap-3">
->>>>>>> cc35c3c (Adjusted project configuration and settings)
-          {/* Required field */}
           <div>
             <div className="mb-1.5 flex items-center justify-between">
               <label className="text-sm font-semibold text-foreground">
@@ -728,12 +473,10 @@ export function FeedbackDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
             </AnimatePresence>
           </div>
 
-          {/* Optional field */}
           <div>
-            <label className="mb-1.5 block text-sm font-semibold text-foreground">
-              Suggestion? 
+            <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
+              Suggestion? <span className="text-[11px] font-normal opacity-50">(optional)</span>
             </label>
->>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
             <textarea
               value={suggestion}
               onChange={(e) => setSuggestion(e.target.value)}
@@ -746,18 +489,10 @@ export function FeedbackDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
 
         <motion.button
           onClick={handleNext}
-<<<<<<< HEAD
-<<<<<<< HEAD
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-[16px] font-semibold text-primary-foreground hover:opacity-90"
-=======
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-[16px] font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
->>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
-=======
           className="mt-5 flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-[15px] font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
           whileTap={{ scale: 0.97 }}
           whileHover={{ scale: 1.02 }}
           transition={{ type: 'spring', stiffness: 400, damping: 20 }}
->>>>>>> cc35c3c (Adjusted project configuration and settings)
         >
           {isLast ? 'Continue' : 'Next'} <ArrowRight className="h-4 w-4" />
         </motion.button>
@@ -836,7 +571,6 @@ export function OpenFeedbackScreen() {
           {"We're listening. Tell us everything."}
         </motion.p>
 
-        {/* Personal stats summary */}
         <motion.div
           className="mb-5 overflow-hidden rounded-2xl border border-border bg-card"
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14 }}
