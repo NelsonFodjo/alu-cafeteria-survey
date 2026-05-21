@@ -394,21 +394,26 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   const requirementLabel = total <= 3
     ? total === 1 ? 'Select it to give feedback' : `Select all ${total} items to continue`
     : `Select at least 2 items`
 
 >>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
+=======
+>>>>>>> d6e42a5 (Refactor DislikeDetailScreen for improved user feedback and layout adjustments)
   return (
     <motion.div
-      className="fixed inset-0 flex flex-col bg-background"
+      className="fixed inset-0 flex flex-col items-center justify-center bg-background px-6"
       style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 0%, color-mix(in srgb, var(--primary) 9%, transparent), var(--background))' }}
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
     >
-      <div className="shrink-0 px-6 pb-3 pt-12">
+      {/* All content is centered and compact — never fills the full screen */}
+      <div className="w-full max-w-sm">
+
         <motion.h1
-          className="mb-1.5 text-center text-3xl font-bold text-foreground"
+          className="mb-3 text-center text-3xl font-bold text-foreground"
           style={{ fontFamily: 'var(--font-heading)' }}
           initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
         >
@@ -428,33 +433,24 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
           className="grid grid-cols-3 gap-2.5 pb-4 sm:grid-cols-4"
 =======
 
-        {/* Requirement banner — always visible, styled by whether it's satisfied */}
-        <motion.div
-          className={`mt-3 flex items-center justify-between rounded-2xl px-4 py-3 transition-colors ${
-            selectionMet
-              ? 'bg-emerald-500/10 border border-emerald-500/30'
-              : showError
-                ? 'bg-destructive/10 border border-destructive/40'
-                : 'bg-foreground/[0.05] border border-border'
-          }`}
+        {/* Plain explanatory message — not styled as an achievement or status */}
+        <motion.p
+          className="mb-5 text-center text-[14px] leading-relaxed text-muted-foreground"
           initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
         >
-          <p className={`text-[13px] font-medium ${selectionMet ? 'text-emerald-600' : showError ? 'text-destructive' : 'text-muted-foreground'}`}>
-            {selectionMet ? '✓ Ready to give feedback' : requirementLabel}
-          </p>
-          {/* Live counter bubble */}
-          <span className={`ml-3 shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold tabular-nums ${
-            selectionMet ? 'bg-emerald-500 text-white' : showError ? 'bg-destructive text-white' : 'bg-foreground/10 text-foreground'
-          }`}>
-            {selectedDislikedIds.length} / {total <= 3 ? total : `${total}`}
-          </span>
-        </motion.div>
-      </div>
+          {total >= 2
+            ? `We need you to select two or more from this list to provide more feedback to help us understand what's wrong with them. You're free to tell us that you just don't like them — that's already helpful.`
+            : `Let us know if you'd like to give any feedback on this item. You're free to simply say you don't like it — that's enough.`}
+        </motion.p>
 
-      <div className="flex-1 overflow-y-auto px-6 pt-3">
+        {/* Small centered card grid */}
         <motion.div
+<<<<<<< HEAD
           className="grid grid-cols-3 gap-3 pb-4 sm:grid-cols-4"
 >>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
+=======
+          className="mb-5 flex flex-wrap justify-center gap-3"
+>>>>>>> d6e42a5 (Refactor DislikeDetailScreen for improved user feedback and layout adjustments)
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14 }}
         >
           {dislikedItems.map((item, i) => {
@@ -484,44 +480,46 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
                 </div>
 =======
                 onClick={() => { toggleDislikedSelection(item.id); setShowError(false) }}
-                className={`relative cursor-pointer overflow-hidden rounded-2xl border-2 transition-all ${
+                className={`relative w-[88px] cursor-pointer overflow-hidden rounded-2xl border-2 transition-all ${
                   isSelected
-                    ? 'border-primary shadow-lg shadow-primary/20 scale-[1.03]'
+                    ? 'border-primary shadow-lg shadow-primary/20'
                     : showError && !isSelected
                       ? 'border-destructive/50 bg-destructive/5'
-                      : 'border-border hover:border-foreground/30 hover:scale-[1.02]'
+                      : 'border-border hover:border-foreground/30'
                 }`}
-                initial={{ opacity: 0, scale: 0.88 }} animate={{ opacity: 1, scale: isSelected ? 1.03 : 1 }}
-                transition={{ delay: Math.min(i * 0.03, 0.3) }}
-                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.88 }} animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: Math.min(i * 0.04, 0.3) }}
+                whileTap={{ scale: 0.93 }}
               >
-                {/* Selection checkmark — large and prominent */}
-                <div className={`absolute right-2 top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full border-2 transition-all ${
-                  isSelected ? 'border-primary bg-primary' : 'border-border bg-background/80'
+                {/* Checkbox in corner */}
+                <div className={`absolute right-1.5 top-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all ${
+                  isSelected ? 'border-primary bg-primary' : 'border-white/60 bg-black/30'
                 }`}>
-                  {isSelected && <Check className="h-3.5 w-3.5 text-primary-foreground" strokeWidth={3} />}
+                  {isSelected && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
                 </div>
 
                 <img src={item.image_url} alt={item.name} className="aspect-square w-full object-cover" />
 
-                {/* Name label — tinted when selected */}
-                <div className={`px-2 py-2 transition-colors ${isSelected ? 'bg-primary/15' : 'bg-card'}`}>
-                  <p className={`truncate text-center text-[11px] font-semibold ${isSelected ? 'text-primary' : 'text-muted-foreground'}`}>
+                <div className={`px-1.5 py-1.5 transition-colors ${isSelected ? 'bg-primary/15' : 'bg-card'}`}>
+                  <p className={`truncate text-center text-[10px] font-semibold ${isSelected ? 'text-primary' : 'text-muted-foreground'}`}>
                     {item.name}
                   </p>
                 </div>
+<<<<<<< HEAD
 
                 {/* Full border highlight ring when selected */}
                 {isSelected && (
                   <div className="pointer-events-none absolute inset-0 rounded-2xl ring-2 ring-primary/40" />
                 )}
 >>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
+=======
+>>>>>>> d6e42a5 (Refactor DislikeDetailScreen for improved user feedback and layout adjustments)
               </motion.button>
             )
           })}
         </motion.div>
-      </div>
 
+<<<<<<< HEAD
       <div className="shrink-0 border-t border-border px-6 pb-8 pt-4">
 <<<<<<< HEAD
         <button
@@ -534,6 +532,8 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
         <button onClick={() => setScreen('open-feedback')} className="w-full text-center text-sm text-muted-foreground transition-colors hover:text-foreground">
           Skip →
 =======
+=======
+>>>>>>> d6e42a5 (Refactor DislikeDetailScreen for improved user feedback and layout adjustments)
         {/* Error message on failed attempt */}
         <AnimatePresence>
           {showError && !selectionMet && (
@@ -541,9 +541,9 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
               className="mb-3 text-center text-sm font-medium text-destructive"
               initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
             >
-              {total <= 3
-                ? `Please select ${total === 1 ? 'the item' : 'all items'} before continuing`
-                : 'Please select at least 2 items before continuing'}
+              {total === 1
+                ? 'Please select the item before continuing.'
+                : 'Please select at least 2 items before continuing.'}
             </motion.p>
           )}
         </AnimatePresence>
@@ -556,12 +556,16 @@ export function DislikeDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
               : 'bg-foreground/10 text-foreground/40 cursor-not-allowed'
           }`}
         >
+<<<<<<< HEAD
           Give Feedback
           <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${selectionMet ? 'bg-white/20' : 'bg-foreground/10'}`}>
             {selectedDislikedIds.length}
           </span>
           <ArrowRight className="h-4 w-4" />
 >>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
+=======
+          Give Feedback ({selectedDislikedIds.length}) <ArrowRight className="h-4 w-4" />
+>>>>>>> d6e42a5 (Refactor DislikeDetailScreen for improved user feedback and layout adjustments)
         </button>
       </div>
     </motion.div>
