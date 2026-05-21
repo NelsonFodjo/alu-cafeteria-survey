@@ -172,6 +172,11 @@ export function SwipeScreen({ foodItems }: { foodItems: FoodItem[] }) {
         </div>
       </div>
 
+      {/* Title */}
+      <p className="relative z-10 mb-4 text-center text-base font-semibold text-foreground/70 tracking-wide">
+        Do you Like this?
+      </p>
+
       {/* Card area */}
       <div className="relative z-10 w-full max-w-sm px-5">
         {/* Next card (behind) — tinted by nextCardTintRef */}
