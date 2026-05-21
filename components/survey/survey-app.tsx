@@ -24,7 +24,7 @@ export function SurveyApp() {
       .from('food_items')
       .select('*')
       .eq('is_active', true)
-      .order('order_index')
+      .order('name')
       .then(({ data, error }) => {
         if (!error) setFoodItems(data || [])
         setIsLoading(false)
@@ -50,21 +50,28 @@ export function SurveyApp() {
     )
   }
 
+  const activeScreen = (() => {
+    switch (screen) {
+      case 'intro':               return <IntroScreen key="intro" liveCount={liveCount} />
+      case 'email':               return <EmailScreen key="email" />
+      case 'gender':              return <GenderScreen key="gender" />
+      case 'country':             return <CountryScreen key="country" />
+      case 'category-transition': return <CategoryTransition key={`transition-${currentCategory}`} category={currentCategory} foodItems={foodItems} />
+      case 'swipe':               return <SwipeScreen key="swipe" foodItems={foodItems} />
+      case 'dislike-detail':      return <DislikeDetailScreen key="dislike-detail" foodItems={foodItems} />
+      case 'feedback-detail':     return <FeedbackDetailScreen key="feedback-detail" foodItems={foodItems} />
+      case 'open-feedback':       return <OpenFeedbackScreen key="open-feedback" />
+      case 'results':             return <ResultsScreen key="results" foodItems={foodItems} />
+      default:                    return null
+    }
+  })()
+
   return (
     <>
-    <ThemeToggle />
-    <AnimatePresence mode="wait">
-      {screen === 'intro'               && <IntroScreen key="intro" liveCount={liveCount} />}
-      {screen === 'email'               && <EmailScreen key="email" />}
-      {screen === 'gender'              && <GenderScreen key="gender" />}
-      {screen === 'country'             && <CountryScreen key="country" />}
-      {screen === 'category-transition' && <CategoryTransition key={`transition-${currentCategory}`} category={currentCategory} foodItems={foodItems} />}
-      {screen === 'swipe'               && <SwipeScreen key="swipe" foodItems={foodItems} />}
-      {screen === 'dislike-detail'      && <DislikeDetailScreen key="dislike-detail" foodItems={foodItems} />}
-      {screen === 'feedback-detail'     && <FeedbackDetailScreen key="feedback-detail" foodItems={foodItems} />}
-      {screen === 'open-feedback'       && <OpenFeedbackScreen key="open-feedback" />}
-      {screen === 'results'             && <ResultsScreen key="results" foodItems={foodItems} />}
-    </AnimatePresence>
+      <ThemeToggle />
+      <AnimatePresence mode="wait">
+        {activeScreen}
+      </AnimatePresence>
     </>
   )
 }

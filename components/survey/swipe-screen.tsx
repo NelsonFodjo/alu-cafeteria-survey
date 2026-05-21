@@ -48,7 +48,11 @@ export function SwipeScreen({ foodItems }: { foodItems: FoodItem[] }) {
     const catIndex = CATEGORIES.indexOf(currentCategory)
 
     if (idx + 1 >= catItems.length) {
-      const nextIdx = catIndex + 1
+      // Find the next category that actually has food items
+      let nextIdx = catIndex + 1
+      while (nextIdx < CATEGORIES.length && foodItems.filter(i => i.category === CATEGORIES[nextIdx]).length === 0) {
+        nextIdx++
+      }
       if (nextIdx < CATEGORIES.length) {
         const nextCat = CATEGORIES[nextIdx]
         confetti({ particleCount: 55, spread: 65, origin: { y: 0.6 }, gravity: 2.2, scalar: 0.7, colors: ['#F5A623', '#22c55e', '#ffffff'] })
@@ -129,6 +133,13 @@ export function SwipeScreen({ foodItems }: { foodItems: FoodItem[] }) {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [swipeCard, isAnimating])
+
+  useEffect(() => {
+    if (!currentItem) {
+      const allLiked = useSurveyStore.getState().responses.every((r) => r.liked)
+      setScreen(allLiked ? 'open-feedback' : 'dislike-detail')
+    }
+  }, [currentItem, setScreen])
 
   if (!currentItem) return null
 

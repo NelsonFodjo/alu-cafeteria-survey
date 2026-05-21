@@ -38,7 +38,6 @@ export interface FoodItem {
   description?: string
   image_url: string
   category: Category
-  order_index: number
   is_active: boolean
 }
 

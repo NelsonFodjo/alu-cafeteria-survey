@@ -95,9 +95,6 @@ function SwipeDemo({ foodItems, onDone }: { foodItems: FoodItem[]; onDone: () =>
 
   const card1X = phase === 'right' ? '130vw' : '0px'
   const card1Rotate = phase === 'right' ? 22 : 0
-  const card2X = phase === 'left' ? '-130vw' : '0px'
-  const card2Rotate = phase === 'left' ? -22 : 0
-
   const likeOpacity = phase === 'right' ? 1 : 0
   const nopeOpacity = phase === 'left' ? 1 : 0
 
@@ -509,7 +506,7 @@ export function FeedbackDetailScreen({ foodItems }: { foodItems: FoodItem[] }) {
 // OpenFeedbackScreen — free-text field + final Supabase submission
 // ═══════════════════════════════════════════════════════════════════════════════
 export function OpenFeedbackScreen() {
-  const { openFeedback, setOpenFeedback, studentId, responses, setScreen, setIsDone } = useSurveyStore()
+  const { openFeedback, setOpenFeedback, responses, setScreen, setIsDone } = useSurveyStore()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -518,28 +515,28 @@ export function OpenFeedbackScreen() {
   const likedPct = responses.length > 0 ? Math.round((totalLiked / responses.length) * 100) : 0
 
   const handleSubmit = async () => {
-    if (!studentId) { setError('Session lost — please refresh and try again.'); return }
+    const { studentId: sid, responses: freshResponses, openFeedback: freshFeedback } = useSurveyStore.getState()
+    if (!sid) { setError('Session lost — please refresh and try again.'); return }
     setIsLoading(true)
     setError('')
     try {
       const supabase = createClient()
 
-      if (responses.length > 0) {
-        const { error: e } = await supabase.from('responses').upsert(
-          responses.map((r) => ({
-            student_id: studentId,
+      if (freshResponses.length > 0) {
+        const { error: e } = await supabase.from('responses').insert(
+          freshResponses.map((r) => ({
+            student_id: sid,
             food_item_id: r.food_item_id,
             liked: r.liked,
             what_is_wrong: r.what_is_wrong || null,
             suggestion: r.suggestion || null,
-          })),
-          { onConflict: 'student_id,food_item_id' },
+          }))
         )
         if (e) throw e
       }
 
-      if (openFeedback.trim()) {
-        const { error: e } = await supabase.from('open_feedback').insert({ student_id: studentId, content: openFeedback.trim() })
+      if (freshFeedback.trim()) {
+        const { error: e } = await supabase.from('open_feedback').insert({ student_id: sid, content: freshFeedback.trim() })
         if (e) throw e
       }
 
