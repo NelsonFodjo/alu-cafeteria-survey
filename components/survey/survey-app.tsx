@@ -58,11 +58,7 @@ export function SurveyApp() {
       {screen === 'email'               && <EmailScreen key="email" />}
       {screen === 'gender'              && <GenderScreen key="gender" />}
       {screen === 'country'             && <CountryScreen key="country" />}
-<<<<<<< HEAD
-      {screen === 'category-transition' && <CategoryTransition key={`transition-${currentCategory}`} category={currentCategory} />}
-=======
       {screen === 'category-transition' && <CategoryTransition key={`transition-${currentCategory}`} category={currentCategory} foodItems={foodItems} />}
->>>>>>> 438552e (Add detailed calculations documentation for Results page metrics)
       {screen === 'swipe'               && <SwipeScreen key="swipe" foodItems={foodItems} />}
       {screen === 'dislike-detail'      && <DislikeDetailScreen key="dislike-detail" foodItems={foodItems} />}
       {screen === 'feedback-detail'     && <FeedbackDetailScreen key="feedback-detail" foodItems={foodItems} />}
