@@ -515,12 +515,19 @@ export function OpenFeedbackScreen() {
   const likedPct = responses.length > 0 ? Math.round((totalLiked / responses.length) * 100) : 0
 
   const handleSubmit = async () => {
-    const { studentId: sid, responses: freshResponses, openFeedback: freshFeedback } = useSurveyStore.getState()
-    if (!sid) { setError('Session lost — please refresh and try again.'); return }
+    const { email, gender, country, responses: freshResponses, openFeedback: freshFeedback } = useSurveyStore.getState()
+    if (!email || !gender || !country) { setError('Session lost — please refresh and try again.'); return }
     setIsLoading(true)
     setError('')
     try {
       const supabase = createClient()
+
+      // Insert student and get their ID
+      const { data: student, error: se } = await supabase
+        .from('students').insert({ email, gender, country }).select('id').single()
+      if (se) throw se
+      const sid = student.id
+      useSurveyStore.getState().setStudentId(sid)
 
       if (freshResponses.length > 0) {
         const { error: e } = await supabase.from('responses').insert(

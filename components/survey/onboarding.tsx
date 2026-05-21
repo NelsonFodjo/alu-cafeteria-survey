@@ -316,33 +316,14 @@ export function GenderScreen() {
 // ═══════════════════════════════════════════════════════════════════════════════
 export function CountryScreen() {
   const [search, setSearch] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
-  const { country, setCountry, setScreen, email, gender, setStudentId, studentId } = useSurveyStore()
+  const { country, setCountry, setScreen, email, gender } = useSurveyStore()
 
   const filtered = AFRICAN_COUNTRIES.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()))
 
-  const handleContinue = async () => {
+  const handleContinue = () => {
     if (!country || !email || !gender) return
-    setIsLoading(true)
-    setError('')
-    try {
-      const supabase = createClient()
-      if (studentId) {
-        // Retake path: student already exists, update demographics
-        await supabase.from('students').update({ gender, country }).eq('id', studentId)
-      } else {
-        const { data, error: err } = await supabase
-          .from('students').insert({ email: email.toLowerCase(), gender, country }).select('id').single()
-        if (err) throw err
-        setStudentId(data.id)
-      }
-      setScreen('category-transition')
-    } catch {
-      setError('Something went wrong. Please try again.')
-    } finally {
-      setIsLoading(false)
-    }
+    setCountry(country)
+    setScreen('category-transition')
   }
 
   return (
@@ -415,13 +396,12 @@ export function CountryScreen() {
             Selected: <span className="font-medium text-foreground">{country}</span>
           </motion.p>
         )}
-        {error && <p className="mb-3 text-center text-sm text-destructive">{error}</p>}
         <button
           onClick={handleContinue}
-          disabled={!country || isLoading}
+          disabled={!country}
           className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-[16px] font-semibold text-primary-foreground transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-35"
         >
-          {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <>Let's go <ArrowRight className="h-4 w-4" /></>}
+          Let's go <ArrowRight className="h-4 w-4" />
         </button>
       </div>
     </motion.div>

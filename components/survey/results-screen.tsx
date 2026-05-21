@@ -195,7 +195,7 @@ export function ResultsScreen({ foodItems }: { foodItems: FoodItem[] }) {
             </div>
             <div className="flex flex-1 flex-col gap-3">
               <div className="flex justify-between">
-                <span className="text-xs text-muted-foreground">Total votes</span>
+                <span className="text-xs text-muted-foreground">Total Swipes</span>
                 <span className="text-sm font-bold text-foreground">{totalVotes.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
