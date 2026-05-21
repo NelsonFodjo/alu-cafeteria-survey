@@ -213,7 +213,7 @@ function SwipeDemo({ foodItems, onDone }: { foodItems: FoodItem[]; onDone: () =>
       </motion.p>
     </motion.div>
   )
-}
+} 
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // DislikeDetailScreen
